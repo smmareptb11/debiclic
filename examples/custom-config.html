@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Débi'Clic – Configuration personnalisée</title>
+  <script src="https://unpkg.com/debiclic@latest/dist/embed/debiclic.min.js"></script>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #f9fafb;
+      color: #333;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #0f172a;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+      color: #1e293b;
+    }
+
+    .section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="color"],
+    select {
+      padding: 0.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      background: white;
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #2563eb;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #2563eb;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    #debiclic-widget {
+      width: 100%;
+      min-height: 600px;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.75rem;
+      background: white;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Configurer Débi'Clic</h1>
+
+  <form id="config-form">
+    <h2>📍 Stations</h2>
+    <div class="section">
+      <label>
+        Codes stations (séparés par des virgules)
+        <input
+          type="text"
+          name="codeStations"
+          id="codeStations"
+          value="F352000101,F352000201,F353000101,F357000101,F358000101,F358000402"
+          required />
+      </label>
+    </div>
+
+    <div id="labels-section" class="section">
+      <!-- Champs nom personnalisés -->
+    </div>
+
+    <div class="section">
+      <label>
+        Grandeur
+        <select name="grandeur">
+          <option value="Q">Débit (Q)</option>
+          <option value="H">Hauteur (H)</option>
+        </select>
+      </label>
+      <label>
+        Nombre de jours (1–30)
+        <input type="number" name="days" min="1" max="30" value="30" />
+      </label>
+      <label>
+        Ordre des stations
+        <select name="order">
+          <option value="default">Défaut</option>
+          <option value="asc">Croissant</option>
+          <option value="desc">Décroissant</option>
+        </select>
+      </label>
+    </div>
+
+    <h2>🎨 Thème</h2>
+    <div class="section">
+      <label>
+        Couleur des stations
+        <input type="color" name="colorStation" value="#007BFF" />
+      </label>
+      <label>
+        Couleur station sélectionnée
+        <input type="color" name="colorSelectedStation" value="#FF0000" />
+      </label>
+      <label>
+        Couleur Débit (Q)
+        <input type="color" name="colorQ" value="#007BFF" />
+      </label>
+      <label>
+        Couleur Hauteur (H)
+        <input type="color" name="colorH" value="#AA336A" />
+      </label>
+    </div>
+
+    <h2>🖼️ Affichage</h2>
+    <div class="section">
+      <label>
+        Largeur (ex: 100%, 800)
+        <input type="text" name="width" value="100%" />
+      </label>
+      <label>
+        Hauteur (ex: 600, 80%)
+        <input type="text" name="height" value="600" />
+      </label>
+      <label>
+        Afficher la carte ?
+        <select name="showMap">
+          <option value="true">Oui</option>
+          <option value="false">Non</option>
+        </select>
+      </label>
+    </div>
+
+    <button type="submit">Mettre à jour le widget</button>
+  </form>
+
+  <div id="debiclic-widget"></div>
+
+  <script>
+    const form = document.getElementById('config-form');
+    const codeStationsInput = document.getElementById('codeStations');
+    const labelsSection = document.getElementById('labels-section');
+    const widgetContainer = document.getElementById('debiclic-widget');
+
+    function updateLabelInputs() {
+      labelsSection.innerHTML = '';
+      const codes = codeStationsInput.value.split(',').map(s => s.trim()).filter(Boolean);
+      codes.forEach(code => {
+        const label = document.createElement('label');
+        label.innerHTML = `Nom personnalisé pour ${code}
+          <input type="text" name="label-${code}" placeholder="Nom visible pour ${code}" />`;
+        labelsSection.appendChild(label);
+      });
+    }
+
+    function getWidgetConfig(data) {
+      const codeStations = data.get('codeStations').split(',').map(s => s.trim()).filter(Boolean);
+      const stationsLabels = {};
+      codeStations.forEach(code => {
+        const val = data.get(`label-${code}`);
+        if (val) stationsLabels[code] = val;
+      });
+
+      return {
+        container: '#debiclic-widget',
+        codeStations,
+        stationsLabels,
+        colors: {
+          station: data.get('colorStation'),
+          selectedStation: data.get('colorSelectedStation'),
+          Q: data.get('colorQ'),
+          H: data.get('colorH')
+        },
+        grandeur: data.get('grandeur'),
+        days: parseInt(data.get('days'), 10),
+        order: data.get('order'),
+        width: data.get('width'),
+        height: data.get('height'),
+        showMap: data.get('showMap') === 'true'
+      };
+    }
+
+    codeStationsInput.addEventListener('input', updateLabelInputs);
+    updateLabelInputs();
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      widgetContainer.innerHTML = '';
+      const data = new FormData(form);
+      const config = getWidgetConfig(data);
+      debiclic.init(config);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const data = new FormData(form);
+      const config = getWidgetConfig(data);
+      debiclic.init(config);
+    });
+  </script>
+</body>
+</html>
