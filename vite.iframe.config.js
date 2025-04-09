@@ -3,7 +3,7 @@ import preact from '@preact/preset-vite'
 import { resolve } from 'path'
 
 export default defineConfig({
-  base: '/iframe/',
+  base: './',
   plugins: [preact()],
   build: {
     outDir: 'dist/iframe',
