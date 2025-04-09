@@ -11,8 +11,8 @@ export async function fetchStations(codeStations) {
 	return json.data
 };
 
-export async function fetchMeasurements({ codeStation, grandeurHydro = 'H,Q', sort = 'desc' }) {
-	const url = `${HUBEAU_API_URL}/hydrometrie/observations_tr?code_entite=${codeStation}&type_entite=station_hydrometrique&grandeur_hydro=${grandeurHydro}&size=20000&sort=${sort}&fields=date_obs,resultat_obs,grandeur_hydro`
+export async function fetchMeasurements({ codeStation, grandeurHydro = 'H,Q' }) {
+	const url = `${HUBEAU_API_URL}/hydrometrie/observations_tr?code_entite=${codeStation}&type_entite=station_hydrometrique&grandeur_hydro=${grandeurHydro}&size=20000&fields=date_obs,resultat_obs,grandeur_hydro`
 	const res = await fetch(url)
 	const json = await res.json()
 

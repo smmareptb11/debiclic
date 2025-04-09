@@ -16,7 +16,7 @@ const App = ({
 	colors = { station: '#007BFF',selectedStation: '#FF0000',Q: '#007BFF',H: '#AA336A' },
 	grandeurHydro,
 	days = 1,
-	sort = 'desc'
+	sort = 'default'
 }) => {
 	const [stations, setStations] = useState([])
 	const [selectedStationCode, setSelectedStationCode] = useState(null)
@@ -36,7 +36,7 @@ const App = ({
 	useEffect(() => {
 		async function getMeasurements(codeStation) {
 			try {
-				const measurements = await fetchMeasurements({ codeStation, grandeurHydro, sort })
+				const measurements = await fetchMeasurements({ codeStation, grandeurHydro })
 						
 				const { chartQ, chartH, lastQ, lastH } = parseMeasurements(measurements)
 				
