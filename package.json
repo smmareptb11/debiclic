@@ -1,9 +1,16 @@
 {
   "name": "debiclic",
   "description": "Débi’Clic est un outil de consultation simple des données diffusées par l’API hydrométrie Hub’Eau.",
-  "private": true,
   "version": "0.0.0",
+  "files": ["dist"],
   "type": "module",
+  "browser": "dist/embed/debiclic.min.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smmareptb11/debiclic"
+  },
+  "keywords": ["widget", "hydrométrie", "API", "Hub'Eau", "débit", "hauteur", "hydrologie"],
+  "author": "Théophile Merlière <theophile@livingdata.co>",
   "scripts": {
     "dev": "vite",
     "build:iframe": "vite build --config vite.iframe.config.js",
