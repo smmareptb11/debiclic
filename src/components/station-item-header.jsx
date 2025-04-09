@@ -13,7 +13,7 @@ function StationItemHeader({ station, selected, onClick }) {
 	return (
 		<div className="station-header" onClick={handleClick}>
 			<div className="station-info">
-				<div className="station-name">{station.name}</div>
+				<div className="station-name">{station.customLabel || station.name}</div>
 				<div className="station-code">{station.codeStation}</div>
 			</div>
 			{isInactive && <Tag type="inactive">Hors service</Tag>}

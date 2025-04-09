@@ -68,6 +68,7 @@ const App = ({
 	
 				setStations(stations.map(station => ({
 					codeStation: station.code_station,
+					customLabel: stationsLabels[station.code_station],
 					name: station.libelle_station,
 					lat: station.latitude_station,
 					lng: station.longitude_station,
