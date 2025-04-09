@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Débi'Clic - Exemple avec plusieurs stations</title>
+  </head>
+  <body>
+    <div id="debiclic-widget"></div>
+
+    <script src="https://unpkg.com/debiclic@latest/dist/embed/debiclic.min.js"></script>
+    <script>
+      debiclic.init({
+        container: "#debiclic-widget",
+        height: 800,
+        codeStations: [
+            'F001000101',
+            'F002000101',
+            'F012000101',
+            'F012000102',
+            'F041000201',
+            'F312000201',
+            'F324000201',
+            'F330000101',
+            'F330000102',
+            'F332000201',
+            'F333000201',
+            'F351000104',
+            'F351000105',
+            'F351000109',
+            'F352000101',
+            'F352000201',
+            'F353000101',
+            'F357000101',
+            'F358000101',
+            'F358000402'
+        ]
+      });
+    </script>
+  </body>
+</html>
