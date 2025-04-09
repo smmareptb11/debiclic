@@ -28,7 +28,7 @@ Vous pouvez ajouter autant de conteneurs que nécessaire pour afficher plusieurs
 Ajoutez le script CDN à la fin de votre `<body>` :
 
 ```html
-<script src="https://unpkg.com/debiclic@latest/embed/debiclic.min.js"></script>
+<script src="https://unpkg.com/debiclic@latest/dist/embed/debiclic.min.js"></script>
 ```
 
 Cela exposera la fonction globale `debiclic.init()`.
@@ -80,7 +80,7 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
 | `days`            | `number` (1–30)             | Nombre de jours à afficher dans le graphique                                | `30`              |
 | `order`           | `'asc'` \| `'desc'` \| `'default'` | Ordre de tri des stations dans la liste                              | `'desc'`          |
 | `showMap`         | `boolean`                  | Affiche ou masque la carte Leaflet                                          | `true`            |
-| `src`             | `string` *(optionnel)*      | URL personnalisée vers `debiclic.html` si besoin                           | automatique       |
+| `src`             | `string` *(optionnel)*      | URL personnalisée vers `index.html` si besoin                           | automatique       |
 
 ---
 

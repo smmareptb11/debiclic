@@ -61,7 +61,7 @@ Permettre aux collectivités, acteurs publics ou tout autre site tiers d’inté
 ### 3. Ajouter le script debiclic.min.js
 
 ```html
-<script src="https://unpkg.com/debiclic@latest/embed/debiclic.min.js"></script>
+<script src="https://unpkg.com/debiclic@latest/dist/embed/debiclic.min.js"></script>
 ```
 
 Ce script injecte dynamiquement une iframe contenant l'application Débi'Clic, puis lui transmet automatiquement la configuration via `postMessage`.

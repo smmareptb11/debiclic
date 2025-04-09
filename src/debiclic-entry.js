@@ -9,7 +9,7 @@ function init(config) {
 	}
 
 	const iframe = document.createElement('iframe')
-	iframe.src = config.src || 'https://unpkg.com/debiclic@latest/iframe/debiclic.html'
+	iframe.src = config.src || 'https://unpkg.com/debiclic@latest/dist/iframe/index.html'
 	iframe.width = config.width || '100%'
 	iframe.height = config.height || '100%'
 	iframe.style.border = 'none'
