@@ -2,7 +2,7 @@
 
 **Débi’Clic** est une bibliothèque JavaScript légère et configurable permettant de visualiser les hauteurs d’eau et les débits des cours d’eau en France. Elle s’appuie sur l’API hydrométrie [Hub’Eau](https://hubeau.eaufrance.fr/) pour offrir une interface interactive intégrable dans toute page web grâce à une simple balise `<script>`.
 
-Développé pour le [SMMAR](https://www.smmar.fr/), cet outil est conçu pour être simple à déployer, performant, responsive, et personnalisable.
+Développé par [SMMAR](https://www.smmar.fr/), cet outil est conçu pour être simple à déployer, performant, responsive, et personnalisable.
 
 ---
 
@@ -22,7 +22,7 @@ Permettre aux collectivités, acteurs publics ou tout autre site tiers d’inté
 - 🖼️ **Support multi-instances** sur une même page
 - 📱 **Interface responsive** adaptée aux mobiles et tablettes
 - 📤 **Export des graphiques** en PNG
-- 🛠️ **Licence open-source AGPL 3.0`
+- 🛠️ **Licence open-source AGPL 3.0**
 
 ---
 
