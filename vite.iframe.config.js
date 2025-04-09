@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     outDir: 'dist/iframe',
     rollupOptions: {
-      input: resolve(__dirname, 'debiclic.html'),
+      input: resolve(__dirname, 'index.html'),
     },
     emptyOutDir: true,
   },
