@@ -1,6 +1,7 @@
 import { render } from 'preact'
 import App from './app.jsx'
 import './index.css'
+import { validateConfig } from './lib/config.js'
 
 const defaultConfig = {
 	codeStations: ['H423041010', 'Y251002001'],
@@ -10,7 +11,7 @@ const defaultConfig = {
 		Q: '#00F5',
 		H: '#0F0'
 	},
-	grandeurHydro: 'Q',
+	grandeur: 'Q,H',
 	days: 1,
 	sort: 'desc'
 }
@@ -19,17 +20,26 @@ const renderApp = (config) => {
 	render(<App {...config} />, document.getElementById('app'))
 }
 
-const isDev = import.meta.env.MODE === 'development' // ou process.env.NODE_ENV
+const isDev = import.meta.env.MODE === 'development'
 
 if (isDev) {
-	// Mode développement : on charge les données en dur
 	renderApp(defaultConfig)
 } else {
-	// Mode production : on attend le postMessage pour avoir les données
 	window.addEventListener('message', (event) => {
 		const { type, data } = event.data || {}
 		if (type === 'setConfig' && data) {
-			renderApp(data)
+			const result = validateConfig(data)
+			if (result.valid) {
+				renderApp(data)
+			} else {
+				console.error('[DébiClic] Configuration invalide :', result.errors)
+				render((
+					<div style="padding:1rem; background:#fee; color:#900; font-family:sans-serif;">
+							<b>Erreur de configuration :</b><br/>
+							<ul>{result.errors.map(error => <li key={error}>{error}</li>)}</ul>
+						</div>
+				), document.getElementById('app'))
+			}
 		}
 	})
 }
