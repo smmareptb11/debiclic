@@ -1,0 +1,35 @@
+{
+  "name": "debiclic",
+  "description": "Débi’Clic est un outil de consultation simple des données diffusées par l’API hydrométrie Hub’Eau.",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:iframe": "vite build --config vite.iframe.config.js",
+    "build:embed": "vite build --config vite.embed.config.js",
+    "build": "npm run build:iframe && npm run build:embed",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.jsx",
+    "lint:fix": "eslint . --ext .js,.jsx --fix"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "preact": "^10.26.2",
+    "uplot": "^1.6.31"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "@preact/preset-vite": "^2.10.1",
+    "eslint": "^9.24.0",
+    "eslint-plugin-preact": "^0.1.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.0.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "vite": "^6.2.0"
+  },
+  "eslintConfig": {
+    "extends": "preact"
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+}

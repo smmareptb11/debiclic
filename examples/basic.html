@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Débi'Clic - Exemple basique</title>
+  </head>
+  <body>
+    <div id="debiclic-widget"></div>
+
+    <script src="https://unpkg.com/debiclic@latest/dist/debiclic.min.js"></script>
+    <script>
+      debiclic.init({
+        container: "#debiclic-widget",
+        codeStations: ["F001000101"]
+      });
+    </script>
+  </body>
+</html>

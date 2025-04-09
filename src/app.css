@@ -1,0 +1,38 @@
+.App {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  flex-direction: row;
+}
+
+.side-menu {
+  width: 400px;
+  border-left: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.fetch-stations-error {
+  padding: 10px;
+}
+
+@media (max-width: 768px) {
+  .App {
+    flex-direction: column;
+  }
+
+  #mapid {
+    height: 33vh;
+  }
+
+  .side-menu {
+    width: 100%;
+    height: 67vh;
+    border-left: none;
+    border-top: 1px solid #ccc;
+  }
+
+  .station-details-view {
+    height: 67vh;
+    overflow-y: auto;
+  }
+}

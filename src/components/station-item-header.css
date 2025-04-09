@@ -1,0 +1,60 @@
+  .station-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	padding: 0.5rem;
+  }
+  
+  .station-info {
+	flex: 1;
+  }
+  
+  .station-name {
+	font-weight: 600;
+	font-size: 1rem;
+  }
+  
+  .station-code {
+	font-size: 0.85rem;
+	color: #666;
+  }
+  
+  .chevron {
+	font-size: 1rem;
+	transition: transform 0.3s ease;
+  }
+
+  .close-button {
+	background-color: #f0f0f0;
+	color: #555;
+	border: none;
+	border-radius: 4px;
+	font-size: 1rem;
+	font-weight: bold;
+	cursor: pointer;
+	width: 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+	cursor: pointer;
+  }
+  
+  .close-button:hover {
+	background-color: #e0e0e0;
+	cursor: pointer;
+	color: #222;
+  }
+  
+  .close-button:focus {
+	outline: none;
+	background-color: #dcdcdc;
+  }
+  
+  .close-button:active {
+	transform: scale(0.97);
+  }
+  

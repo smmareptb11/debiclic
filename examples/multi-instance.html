@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Débi'Clic – Exemple multi-instance</title>
+  </head>
+  <body>
+    <h1>Débi'Clic – Exemple multi-instance</h1>
+
+    <div id="station-seine" style="margin-bottom: 2rem;"></div>
+    <div id="station-loire"></div>
+
+    <script src="https://unpkg.com/debiclic@latest/dist/debiclic.min.js"></script>
+    <script>
+      debiclic.init({
+        container: "#station-seine",
+        codeStations: ["F001000101"],
+        stationsLabels: {
+          F001000101: "Station de la Seine"
+        },
+        colors: {
+          station: "#1E90FF",
+          selectedStation: "#000000",
+          Q: "#1E90FF",
+          H: "#9400D3"
+        },
+        grandeur: "Q",
+        days: 10
+      });
+
+      debiclic.init({
+        container: "#station-loire",
+        codeStations: ["F002000101"],
+        stationsLabels: {
+          F002000101: "Station de la Loire"
+        },
+        colors: {
+          station: "#32CD32",
+          selectedStation: "#000000",
+          Q: "#32CD32",
+          H: "#DC143C"
+        },
+        grandeur: "H",
+        days: 7
+      });
+    </script>
+  </body>
+</html>

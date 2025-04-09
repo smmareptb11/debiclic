@@ -1,0 +1,39 @@
+.station-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 8px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.station-header-sticky {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  padding-bottom: 0.5rem;
+}
+
+.station-chart {
+  margin-top: 0.75rem;
+}
+
+.station-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.station-meta {
+  list-style: none;
+  padding-left: 0;
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.station-meta li {
+  margin-bottom: 0.25rem;
+}
