@@ -1,7 +1,7 @@
 {
   "name": "debiclic",
   "description": "Débi’Clic est un outil de consultation simple des données diffusées par l’API hydrométrie Hub’Eau.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "files": [
     "dist"
   ],
