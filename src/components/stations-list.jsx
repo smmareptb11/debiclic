@@ -1,9 +1,15 @@
 import StationItemHeader from './station-item-header'
 import './stations-list.css'
+import Tag from './tag'
 
 function StationList({ stations, selectedStationCode, measurements, onStationClick }) {
 	if (!stations.length) {
-		return <div className="no-station">Aucune station</div>
+		return (
+			<div className="no-station">
+				<Tag type="warning">Aucune station</Tag>
+				<p>Veuillez renseigner les codes stations que vous souhaitez afficher.</p>
+			</div>
+		)
 	};
 
 	return (
