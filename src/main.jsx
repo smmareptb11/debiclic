@@ -5,13 +5,17 @@ import { validateConfig } from './lib/config.js'
 
 const defaultConfig = {
 	codeStations: ['H423041010', 'Y251002001'],
+	stationsLabels: {
+		'H423041010': 'Station 1',
+		'Y251002001': 'Station 2'
+	},
 	colors: {
 		station: '#0D4',
 		selectedStation: '#F0FF',
 		Q: '#00F5',
 		H: '#0F0'
 	},
-	grandeur: 'Q,H',
+	grandeurHydro: 'Q,H',
 	days: 1,
 	sort: 'desc'
 }

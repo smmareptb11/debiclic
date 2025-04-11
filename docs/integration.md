@@ -53,7 +53,7 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
       Q: "#007BFF",
       H: "#AA336A"
     },
-    grandeur: "Q",
+    grandeurHydro: "Q",
     days: 15,
     order: "asc",
     width: "100%",
@@ -76,7 +76,7 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
 | `codeStations`    | `string[]`                  | Liste des codes stations à afficher                                         | *(obligatoire)*   |
 | `stationsLabels`  | `Record<string, string>`    | Libellés personnalisés par code station                                     | `{}`              |
 | `colors`          | `Record<string, string>`    | Couleurs : `station`, `selectedStation`, `Q`, `H`                           | `{station: '#007BFF', selectedStation: '#FF0000', Q: '#007BFF', H: '#AA336A'}` |
-| `grandeur`        | `'Q'` \| `'H'`               | Type de mesure à afficher (`Q` pour débit, `H` pour hauteur)                | `'Q'`             |
+| `grandeurHydro`   | `'Q'` \| `'H'`               | Type de mesure à afficher (`Q` pour débit, `H` pour hauteur)                | `'Q'`             |
 | `days`            | `number` (1–30)             | Nombre de jours à afficher dans le graphique                                | `30`              |
 | `order`           | `'asc'` \| `'desc'` \| `'default'` | Ordre de tri des stations dans la liste                              | `'desc'`          |
 | `showMap`         | `boolean`                  | Affiche ou masque la carte Leaflet                                          | `true`            |

@@ -32,10 +32,10 @@ export function validateConfig(config) {
 
 	// Valeurs acceptées pour grandeur
 	const validGrandeurValues = ['Q', 'H', 'Q,H', 'H,Q']
-	if (config.grandeur === undefined) {
-		config.grandeur = 'Q,H' // valeur par défaut
-	} else if (!validGrandeurValues.includes(config.grandeur)) {
-		errors.push('"grandeur" doit être "Q", "H", "Q,H" ou "H,Q".')
+	if (config.grandeurHydro === undefined) {
+		config.grandeurHydro = 'Q,H' // valeur par défaut
+	} else if (!validGrandeurValues.includes(config.grandeurHydro)) {
+		errors.push('"grandeurHydro" doit être "Q", "H", "Q,H" ou "H,Q".')
 	}
 
 	// Vérification des jours

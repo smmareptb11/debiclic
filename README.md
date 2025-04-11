@@ -51,7 +51,7 @@ Permettre aux collectivités, acteurs publics ou tout autre site tiers d’inté
       Q: "#007BFF",
       H: "#AA336A"
     },
-    grandeur: "Q",
+    grandeurHydro: "Q",
     days: 15,
     order: "asc"
   });
