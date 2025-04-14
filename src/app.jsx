@@ -3,26 +3,23 @@ import StationList from './components/stations-list'
 import StationItem from './components/station-item'
 import Map from './components/map'
 import './app.css'
-import { fetchStations, fetchObservationsElab } from './lib/api'
-import { parseObservations } from './lib/charts'
+import { fetchStations } from './lib/api'
 import { ThemeProvider } from './contexts/theme-context'
 import Loader from './components/loader'
 import Tag from './components/tag'
-import { subtractDays } from './util/date'
 
 const App = ({
 	showMap = true,
 	codeStations = [],
 	stationsLabels = {},
 	colors = { station: '#007BFF',selectedStation: '#FF0000', graph: '#007BFF' },
-	grandeurHydro= 'QmM',
+	grandeurHydro= 'QmnJ',
 	days = 30,
 	sort = 'default'
 }) => {
 	const [stations, setStations] = useState([])
 	const [selectedStationCode, setSelectedStationCode] = useState(null)
 	const [hoveredStationCode, setHoveredStationCode] = useState(null)
-	const [observations, setObservations] = useState({})
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState(null)
 
@@ -32,33 +29,6 @@ const App = ({
 		}
 		else {
 			setSelectedStationCode(codeStation)
-		}
-	}, [selectedStationCode])
-
-	useEffect(() => {
-		async function getObservations(codeStation) {
-			try {
-				const now = new Date()
-				const startDate = subtractDays(days, now)
-				const observations = await fetchObservationsElab({
-					codeStation,
-					grandeurHydro,
-					startDate,
-					endDate: now
-				})
-				const parsedObservations = parseObservations(observations)
-						
-				
-				setObservations(parsedObservations)
-			}
-			catch (error) {
-				setObservations({ error: error.message })
-			}
-		}
-		
-		setObservations({})
-		if (selectedStationCode) {
-			getObservations(selectedStationCode)
 		}
 	}, [selectedStationCode])
 
@@ -119,11 +89,10 @@ const App = ({
 							<div className="station-details-view">
 								<StationItem
 									station={stations.find(({ codeStation }) => codeStation === selectedStationCode)}
-									observations={{
-										data: observations[grandeurHydro] ? observations[grandeurHydro].chart : [],
+									graphProps={{
 										grandeurHydro,
-										error: observations?.error,
-										color: colors.graph
+										color: colors.graph,
+										days
 									}}
 									onClick={handleClickStation}
 								/>

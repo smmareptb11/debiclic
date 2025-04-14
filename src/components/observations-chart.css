@@ -7,10 +7,14 @@
   cursor: not-allowed;
 }
 
-.chart-wrapper {
-  position: relative;
+.export-btn {
+  margin: 1rem 0;
+  width: 100%;
 }
 
-.chart-container {
-  position: relative;
+.warning-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
 }

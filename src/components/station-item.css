@@ -26,14 +26,40 @@
   gap: 0.5rem;
 }
 
-.station-meta {
-  list-style: none;
-  padding-left: 0;
-  margin: 0 0 0.75rem 0;
+.date-range-selector {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
   font-size: 0.9rem;
-  color: #444;
+  color: #666;
 }
 
-.station-meta li {
-  margin-bottom: 0.25rem;
+.date-range-selector input {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.date-range-selector span {
+  margin: 0 0.5rem;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.pagination-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.period-displayed {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777;
 }

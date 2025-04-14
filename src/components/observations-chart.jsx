@@ -17,7 +17,7 @@ const HYDRO_META = {
 	HIXnJ: { label: 'Hauteur max. journalière',unit: 'mm',  coef: 1,        withTime: true }
 }
 
-const ObservationChart = ({ data, color = '#007BFF', grandeurHydro }) => {
+const ObservationChart = ({ data, color = '#007BFF', grandeurHydro, onExportPNG }) => {
 	const chartRef = useRef(null)
 	const uplotInstance = useRef(null)
 	const meta = HYDRO_META[grandeurHydro] ?? { label: grandeurHydro, unit: '', coef: 1, withTime: true }
@@ -34,7 +34,7 @@ const ObservationChart = ({ data, color = '#007BFF', grandeurHydro }) => {
 		// - Conversion du tableau de timestamps des millisecondes en secondes pour uPlot
 		// - Application du coefficient sur les valeurs y
 		const transformedData = [
-			data[0].map(t => t / 1000),
+			data[0].map(t => new Date(t).getTime()),
 			data[1].map(v => v * meta.coef)
 		]
 
@@ -68,15 +68,15 @@ const ObservationChart = ({ data, color = '#007BFF', grandeurHydro }) => {
 				}
 			],
 			series: [
-				{ 
-					label: 'Date', 
-					value: (u, raw) => raw ? fullDateTimeFormatter(raw) : '-' 
+				{
+					label: 'Date',
+					value: (u, raw) => raw ? fullDateTimeFormatter(raw) : '-'
 				},
 				{
 					label: meta.label,
 					stroke: color,
 					width: 2,
-					value: (u, v) => v != null ? `${v} ${meta.unit}` : '-'
+					value: (u, v) => v != null ? `${v.toFixed(2)} ${meta.unit}` : '-'
 				}
 			],
 			legend: { show: true }
@@ -94,37 +94,37 @@ const ObservationChart = ({ data, color = '#007BFF', grandeurHydro }) => {
 		const canvas = uplotInstance.current?.root.querySelector('canvas')
 		if (!canvas) return
 
-		const exportCanvas = document.createElement('canvas')
-		exportCanvas.width = canvas.width
-		exportCanvas.height = canvas.height
-		const ctx = exportCanvas.getContext('2d')
-		ctx.fillStyle = '#fff'
-		ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height)
-		ctx.drawImage(canvas, 0, 0)
-
-		const link = document.createElement('a')
-		link.download = `graphique-${grandeurHydro}.png`
-		link.href = exportCanvas.toDataURL('image/png')
-		link.click()
-	}, [grandeurHydro])
+		onExportPNG(canvas)
+	}, [onExportPNG])
 
 	// Affichage conditionnel en fonction de la disponibilité des données
 	if (!data) {
-		return <div className="chart-wrapper"><Loader /></div>
+		return <Loader />
 	}
 
 	if (data.length === 0 || (Array.isArray(data) && data[0].length === 0)) {
-		return <div className="chart-wrapper"><Tag type="warning">Aucune donnée disponible</Tag></div>
+		return (
+			<div className="warning-wrapper">
+				<Tag type="warning">Aucune donnée disponible</Tag>
+			</div>
+		)
 	}
 
 	return (
 		<div className="chart-wrapper">
-			<button disabled={data.length === 0} className="export-btn" onClick={exportPNG}>
-				Export PNG
-			</button>
 			<div className="chart-container">
 				<div ref={chartRef} />
 			</div>
+
+			<button
+				disabled={data.length === 0}
+				type="button"
+				title="Exporter le graphique au format PNG"
+				className="export-btn"
+				onClick={exportPNG}
+			>
+				Exporter en PNG
+			</button>
 		</div>
 	)
 }
