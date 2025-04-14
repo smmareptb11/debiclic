@@ -5,6 +5,28 @@ import 'leaflet/dist/leaflet.css'
 import './map.css'
 import ThemeContext from '../contexts/theme-context'
 
+import.meta.env.DEBICLIC_DOC_URL
+
+const DEBICLIC_DOC_URL = import.meta.env.DEBICLIC_DOC_URL || 'https://github.com/smmareptb11/debiclic'
+
+function createInfoControl() {
+	const infoControl = Leaflet.control({ position: 'bottomleft' })
+	infoControl.onAdd = function(map) {
+		const div = Leaflet.DomUtil.create('div', 'map-info-control')
+		// Apply some basic styling
+		div.style.background = 'rgba(255, 255, 255, 0.8)'
+		div.style.padding = '5px 10px'
+		div.style.borderRadius = '4px'
+		div.style.margin = '10px'
+		// Set the inner HTML with a link to the documentation
+		div.innerHTML = `<a href="${DEBICLIC_DOC_URL}" target="_blank" style="text-decoration: none; color: inherit;">` +
+      '<img src="/assets/debiclic-logo.png" alt="Debiclic Logo" style="height:20px; vertical-align:middle; margin-right:5px;" />' +
+      'Documentation</a>'
+		return div
+	}
+	return infoControl
+}
+
 const styles = {
 	marker: {
 		color: '#fff',
@@ -48,6 +70,9 @@ const Map = ({ stations, selectedStationCode, hoveredStationCode, onHoverStation
 			Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				attribution: '&copy; OpenStreetMap contributors'
 			}).addTo(map)
+
+			const infoControl = createInfoControl()
+			infoControl.addTo(map)
 
 			map.on('click', (e) => {
 				// Si aucun marker n'est à la position cliquée, on désélectionne
