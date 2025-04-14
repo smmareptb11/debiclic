@@ -1,3 +1,14 @@
+export const HYDRO_META = {
+	QmM: { label: 'Débit mensuel',              unit: 'm³/s', coef: 1 / 1000, withTime: false },
+	QmnJ: { label: 'Débit journalier',          unit: 'm³/s', coef: 1 / 1000, withTime: true },
+	QINM: { label: 'Débit min. mensuel',        unit: 'm³/s', coef: 1 / 1000, withTime: false },
+	QINnJ: { label: 'Débit min. journalier',    unit: 'm³/s', coef: 1 / 1000, withTime: true },
+	QixM: { label: 'Débit max. mensuel',        unit: 'm³/s', coef: 1 / 1000, withTime: false },
+	QIXnJ: { label: 'Débit max. journalier',    unit: 'm³/s', coef: 1 / 1000, withTime: true },
+	HIXM: { label: 'Hauteur max. mensuelle',    unit: 'mm',   coef: 1,        withTime: false },
+	HIXnJ: { label: 'Hauteur max. journalière', unit: 'mm',   coef: 1,        withTime: true }
+}
+
 export function parseObservations(observations) {
 	const grouped = {}
 

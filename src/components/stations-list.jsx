@@ -3,7 +3,7 @@ import StationItemHeader from './station-item-header'
 import './stations-list.css'
 import Tag from './tag'
 
-function StationList({ stations, selectedStationCode, hoveredStationCode, onStationClick, onHoverStation }) {
+function StationList({ stations, selectedStationCode, hoveredStationCode, grandeurHydro, onStationClick, onHoverStation }) {
 	const [isPointerOverList, setIsPointerOverList] = useState(false)
 
 	const handleListMouseEnter = useCallback(() => setIsPointerOverList(true), [])
@@ -50,6 +50,7 @@ function StationList({ stations, selectedStationCode, hoveredStationCode, onStat
 					<StationItemHeader
 						station={station}
 						selected={station.codeStation === selectedStationCode}
+						grandeurHydro={grandeurHydro}
 						onClick={onStationClick}
 					/>
 				</div>

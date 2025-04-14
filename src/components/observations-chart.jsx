@@ -5,17 +5,8 @@ import { fullDateTimeFormatter } from '../util/date'
 import Loader from './loader'
 import Tag from './tag'
 import './observations-chart.css'
-
-const HYDRO_META = {
-	QmM: { label: 'Débit mensuel',         unit: 'm³/s', coef: 1 / 1000, withTime: false },
-	QmnJ: { label: 'Débit journalier',       unit: 'm³/s', coef: 1 / 1000, withTime: true },
-	QINM: { label: 'Débit min. mensuel',     unit: 'm³/s', coef: 1 / 1000, withTime: false },
-	QINnJ: { label: 'Débit min. journalier',  unit: 'm³/s', coef: 1 / 1000, withTime: true },
-	QixM: { label: 'Débit max. mensuel',     unit: 'm³/s', coef: 1 / 1000, withTime: false },
-	QIXnJ: { label: 'Débit max. journalier',  unit: 'm³/s', coef: 1 / 1000, withTime: true },
-	HIXM: { label: 'Hauteur max. mensuelle', unit: 'mm',   coef: 1,        withTime: false },
-	HIXnJ: { label: 'Hauteur max. journalière',unit: 'mm',  coef: 1,        withTime: true }
-}
+import { HYDRO_META } from '../lib/observations'
+import { formaterNombreFr } from '../util/number'
 
 const ObservationChart = ({ data, color = '#007BFF', grandeurHydro, onExportPNG }) => {
 	const chartRef = useRef(null)
@@ -76,7 +67,7 @@ const ObservationChart = ({ data, color = '#007BFF', grandeurHydro, onExportPNG 
 					label: meta.label,
 					stroke: color,
 					width: 2,
-					value: (u, v) => v != null ? `${v.toFixed(2)} ${meta.unit}` : '-'
+					value: (u, v) => v != null ? `${formaterNombreFr(v)} ${meta.unit}` : '-'
 				}
 			],
 			legend: { show: true }

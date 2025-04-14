@@ -10,8 +10,16 @@
   
   .station-info {
 	flex: 1;
+	min-width: 50%;
   }
   
+  .station-header-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+  }
+
   .station-name {
 	font-weight: 600;
 	font-size: 1rem;
@@ -21,10 +29,10 @@
 	font-size: 0.85rem;
 	color: #666;
   }
-  
-  .chevron {
-	font-size: 1rem;
-	transition: transform 0.3s ease;
+
+  .station-tags {
+	display: flex;
+	gap: 0.5rem;
   }
 
   .close-button {

@@ -137,6 +137,7 @@ function StationItem({ station, graphProps, onClick }) {
 				<StationItemHeader
 					selected
 					station={station}
+					grandeurHydro={graphProps.grandeurHydro}
 					onClick={onClick ? handleClose : null}
 				/>
 			</div>
