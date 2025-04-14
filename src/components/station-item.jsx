@@ -137,7 +137,7 @@ function StationItem({ station, graphProps, onClick }) {
 				<StationItemHeader
 					selected
 					station={station}
-					onClick={handleClose}
+					onClick={onClick ? handleClose : null}
 				/>
 			</div>
 

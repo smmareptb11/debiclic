@@ -20,7 +20,7 @@ function StationItemHeader({ station, selected, onClick }) {
 			{isInactive && <Tag type="inactive">Hors service</Tag>}
 			
 			{selected ? (
-				<button className="close-button" onClick={handleClick}>X</button>
+				onClick && <button className="close-button" onClick={handleClick}>X</button>
 			) : (
 				<div className="chevron">►</div>
 			)}

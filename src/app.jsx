@@ -64,6 +64,13 @@ const App = ({
 		getStations()
 	}, [codeStations])
 
+	// Si une seule station, on la sélectionne par défaut
+	useEffect(() => {
+		if (stations.length === 1) {
+			setSelectedStationCode(stations[0].codeStation)
+		}
+	}, [stations])
+
 	return (
 		<ThemeProvider colors={colors}>
 			<div className="App">
@@ -94,7 +101,7 @@ const App = ({
 										color: colors.graph,
 										days
 									}}
-									onClick={handleClickStation}
+									onClick={stations.length > 1 ? handleClickStation : null}
 								/>
 							</div>
 						) : (
