@@ -3,24 +3,25 @@ import StationList from './components/stations-list'
 import StationItem from './components/station-item'
 import Map from './components/map'
 import './app.css'
-import { fetchStations, fetchMeasurements } from './lib/api'
-import parseMeasurements from './lib/charts'
+import { fetchStations, fetchObservationsElab } from './lib/api'
+import { parseObservations } from './lib/charts'
 import { ThemeProvider } from './contexts/theme-context'
 import Loader from './components/loader'
 import Tag from './components/tag'
+import { subtractDays } from './util/date'
 
 const App = ({
 	showMap = true,
 	codeStations = [],
 	stationsLabels = {},
-	colors = { station: '#007BFF',selectedStation: '#FF0000',Q: '#007BFF',H: '#AA336A' },
-	grandeurHydro,
-	days = 1,
+	colors = { station: '#007BFF',selectedStation: '#FF0000', graph: '#007BFF' },
+	grandeurHydro= 'QmM',
+	days = 30,
 	sort = 'default'
 }) => {
 	const [stations, setStations] = useState([])
 	const [selectedStationCode, setSelectedStationCode] = useState(null)
-	const [measurements, setMeasurements] = useState(null)
+	const [observations, setObservations] = useState({})
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState(null)
 
@@ -34,27 +35,29 @@ const App = ({
 	}, [selectedStationCode])
 
 	useEffect(() => {
-		async function getMeasurements(codeStation) {
+		async function getObservations(codeStation) {
 			try {
-				const measurements = await fetchMeasurements({ codeStation, grandeurHydro })
-						
-				const { chartQ, chartH, lastQ, lastH } = parseMeasurements(measurements)
-				
-				setMeasurements({
-					discharge: lastQ,
-					height: lastH,
-					chartQ,
-					chartH
+				const now = new Date()
+				const startDate = subtractDays(days, now)
+				const observations = await fetchObservationsElab({
+					codeStation,
+					grandeurHydro,
+					startDate,
+					endDate: now
 				})
+				const parsedObservations = parseObservations(observations)
+						
+				
+				setObservations(parsedObservations)
 			}
 			catch (error) {
-				setMeasurements({ error: error.message })
+				setObservations({ error: error.message })
 			}
 		}
 		
-		setMeasurements(null)
+		setObservations({})
 		if (selectedStationCode) {
-			getMeasurements(selectedStationCode)
+			getObservations(selectedStationCode)
 		}
 	}, [selectedStationCode])
 
@@ -113,14 +116,18 @@ const App = ({
 							<div className="station-details-view">
 								<StationItem
 									station={stations.find(({ codeStation }) => codeStation === selectedStationCode)}
-									measurements={measurements}
+									observations={{
+										data: observations[grandeurHydro] ? observations[grandeurHydro].chart : [],
+										grandeurHydro,
+										error: observations?.error,
+										color: colors.graph
+									}}
 									onClick={handleClickStation}
 								/>
 							</div>
 						) : (
 							<StationList
 								stations={stations}
-								measurements={measurements}
 								selectedStationCode={selectedStationCode}
 								onStationClick={handleClickStation}
 							/>

@@ -1,18 +1,24 @@
-export default function parseMeasurements(measurements) {
-	const dataQ = []
-	const dataH = []
-	
-	for (let i = measurements.length - 1; i >= 0; i--) {
-		const obs = measurements[i]
-		const t = new Date(obs.date_obs).getTime()
-		if (obs.grandeur_hydro === 'Q') dataQ.push([t, obs.resultat_obs / 1000])
-		if (obs.grandeur_hydro === 'H') dataH.push([t, obs.resultat_obs])
+export function parseObservations(observations) {
+	const grouped = {}
+
+	for (const obs of observations) {
+		const t = new Date(obs.date_obs_elab).getTime()
+		const key = obs.grandeur_hydro_elab
+		
+		if (!grouped[key]) grouped[key] = []
+		
+		// On conserve les données sous forme [timestamp, valeur]
+		grouped[key].push([t, obs.resultat_obs_elab])
 	}
-  
-	return {
-		chartQ: dataQ.length ? [dataQ.map(d => d[0]), dataQ.map(d => d[1])] : null,
-		chartH: dataH.length ? [dataH.map(d => d[0]), dataH.map(d => d[1])] : null,
-		lastQ: dataQ.length ? dataQ[dataQ.length - 1][1] : null,
-		lastH: dataH.length ? dataH[dataH.length - 1][1] : null
+
+	// Construction du résultat pour chaque grandeur : [timestamps[], valeurs[]]
+	const result = {}
+	for (const [key, values] of Object.entries(grouped)) {
+		result[key] = {
+			chart: [values.map(([t]) => t), values.map(([, v]) => v)],
+			last: values[values.length - 1][1]
+		}
 	}
+
+	return result
 }

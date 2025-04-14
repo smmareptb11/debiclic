@@ -2,7 +2,7 @@ import StationItemHeader from './station-item-header'
 import './stations-list.css'
 import Tag from './tag'
 
-function StationList({ stations, selectedStationCode, measurements, onStationClick }) {
+function StationList({ stations, selectedStationCode, onStationClick }) {
 	if (!stations.length) {
 		return (
 			<div className="no-station">

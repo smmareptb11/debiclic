@@ -1,13 +1,13 @@
 import { memo, useCallback } from 'preact/compat'
-import StationChart from './station-chart'
 import './station-item.css'
 import LabelItem from './label-item'
 import { shortDateTimeFormatter } from '../util/date'
 import StationComment from './station-comment'
 import Tag from './tag'
 import StationItemHeader from './station-item-header'
+import ObservationChart from './observations-chart'
 
-function StationItem({ station, measurements, onClick }) {
+function StationItem({ station, observations, onClick }) {
 	const handleClose = useCallback(() => {
 		onClick(null)
 	}, [onClick])
@@ -32,16 +32,16 @@ function StationItem({ station, measurements, onClick }) {
 					<LabelItem label="Dernière mise à jour" value={shortDateTimeFormatter(station.dateMaj)} />
 				</ul>
 
-				{measurements?.error ? (
+				{observations?.error ? (
 					<Tag type="error">
-						Erreur lors de la récupération des mesures : {measurements.error}
+						Erreur lors de la récupération des mesures : {observations.error}
 					</Tag>
 				) : (
 					<div className="station-chart">
-						<StationChart
-							isLoading={!measurements}
-							chartQ={measurements?.chartQ}
-							chartH={measurements?.chartH}
+						<ObservationChart
+							data={observations.data}
+							color={observations.color}
+							grandeurHydro={observations.grandeurHydro}
 						/>
 					</div>
 				)}

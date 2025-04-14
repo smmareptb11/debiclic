@@ -10,3 +10,9 @@ export function shortDateTimeFormatter(stringDate) {
 		dateStyle: 'short'
 	}).format(new Date(stringDate))
 }
+
+export function subtractDays(days, endDate = new Date()) {
+	const refDate = new Date(endDate.toISOString())
+	refDate.setDate(refDate.getDate() - days)
+	return refDate
+}
