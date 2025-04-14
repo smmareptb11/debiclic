@@ -16,7 +16,9 @@ function StationItemHeader({ station, selected, onClick }) {
 				<div className="station-name">{station.customLabel || station.name}</div>
 				<div className="station-code">{station.codeStation}</div>
 			</div>
+
 			{isInactive && <Tag type="inactive">Hors service</Tag>}
+			
 			{selected ? (
 				<button className="close-button" onClick={handleClick}>X</button>
 			) : (

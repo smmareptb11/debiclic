@@ -21,6 +21,7 @@ const App = ({
 }) => {
 	const [stations, setStations] = useState([])
 	const [selectedStationCode, setSelectedStationCode] = useState(null)
+	const [hoveredStationCode, setHoveredStationCode] = useState(null)
 	const [observations, setObservations] = useState({})
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState(null)
@@ -99,7 +100,9 @@ const App = ({
 				{showMap && (
 					<Map
 						stations={stations}
+						hoveredStationCode={hoveredStationCode}
 						selectedStationCode={selectedStationCode}
+						onHoverStation={setHoveredStationCode}
 						onSelectStation={handleClickStation}
 					/>
 				)}
@@ -129,7 +132,9 @@ const App = ({
 							<StationList
 								stations={stations}
 								selectedStationCode={selectedStationCode}
+								hoveredStationCode={hoveredStationCode}
 								onStationClick={handleClickStation}
+								onHoverStation={setHoveredStationCode}
 							/>
 						)
 					)}

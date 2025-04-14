@@ -6,15 +6,18 @@ import './map.css'
 import ThemeContext from '../contexts/theme-context'
 
 const styles = {
-	selected: {
-		fillOpacity: 0.8
-	},
 	marker: {
-		fillOpacity: 0.6
+		color: '#fff',
+		fillOpacity: 0.6,
+		radius: 8
+	},
+	hovered: {
+		fillOpacity: 1,
+		radius: 12
 	}
 }
 
-const Map = ({ stations, selectedStationCode, onSelectStation }) => {
+const Map = ({ stations, selectedStationCode, hoveredStationCode, onHoverStation, onSelectStation }) => {
 	const mapRef = useRef(null)
 	const markersRef = useRef({})
 
@@ -87,37 +90,35 @@ const Map = ({ stations, selectedStationCode, onSelectStation }) => {
 					fillColor: colors.station
 				}).addTo(map)
 				markersRef.current[station.codeStation] = marker
-				marker.on('click', () => onSelectStation(station.codeStation))
+
+				marker.on('click', (e) => {
+					Leaflet.DomEvent.stopPropagation(e) // Empêche la propagation de l'événement au clic sur la carte
+					onSelectStation(station.codeStation)
+				})
+
+				// Ajout de l'effet de survol
+				marker.on('mouseover', () => {
+					onHoverStation(station.codeStation)
+					marker.setStyle(styles.hovered)
+				})
+
+				marker.on('mouseout', () => {
+					onHoverStation(null)
+					marker.setStyle(styles.marker)
+				})
 			})
 
 			// FitBounds si stations disponibles
 			fitToStationsBounds(map, stations)
 		}
-	}, [stations, onSelectStation])
+	}, [stations, onSelectStation, onHoverStation])
 
-	// Mise à jour du style de sélection
+	// Sélection de la station
 	useEffect(() => {
 		if (!mapRef.current) return
 	
 		const map = mapRef.current
 		const marker = markersRef.current[selectedStationCode]
-	
-		// Style
-		Object.keys(markersRef.current).forEach(stationCode => {
-			const m = markersRef.current[stationCode]
-			if (stationCode === selectedStationCode) {
-				m.setStyle({
-					...styles.marker,
-					fillColor: colors.selectedStation
-				})
-			}
-			else {
-				m.setStyle({
-					...styles.marker,
-					fillColor: colors.station
-				})
-			}
-		})
 	
 		// Zoom sur la station sélectionnée
 		if (marker) {
@@ -127,6 +128,21 @@ const Map = ({ stations, selectedStationCode, onSelectStation }) => {
 			fitToStationsBounds(map, stations)
 		}
 	}, [selectedStationCode])
+
+	// Effet de survol des stations
+	useEffect(() => {
+		if (!mapRef.current) return
+
+		stations.forEach(station => {
+			const marker = markersRef.current[station.codeStation]
+			if (marker) {
+				marker.setStyle(hoveredStationCode === station.codeStation
+					? styles.hovered
+					: styles.marker
+				)
+			}
+		})
+	}, [hoveredStationCode])
 	
 
 	return (
