@@ -39,7 +39,6 @@ const ObservationChart = ({ data, color = '#007BFF', grandeurHydro, onExportPNG 
 			axes: [
 				{
 					// Axe des x : formatage des dates en fonction de la configuration meta
-					rotate: 45,
 					stroke: '#666',
 					grid: { show: false },
 					values: (u, ts) => ts.map(t =>
@@ -51,7 +50,7 @@ const ObservationChart = ({ data, color = '#007BFF', grandeurHydro, onExportPNG 
 						} : {
 							day: '2-digit',
 							month: '2-digit'
-						}).format(new Date(t * 1000))
+						}).format(new Date(t))
 					)
 				},
 				{
