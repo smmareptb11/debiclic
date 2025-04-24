@@ -1,24 +1,14 @@
-import { fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
-import { resolve, dirname } from 'path'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+import { resolve } from 'path'
 
 export default defineConfig({
-	base: './',
+	base: '/iframe/',
 	plugins: [preact()],
 	build: {
-		assetsDir: 'assets',
 		outDir: 'dist/iframe',
 		rollupOptions: {
-			input: resolve(__dirname, 'index.html'),
-			output: {
-				entryFileNames: `assets/[name].js`,
-				chunkFileNames: `assets/[name].js`,
-				assetFileNames: `assets/[name].[ext]`
-			}
+			input: resolve(__dirname, 'index.html')
 		},
 		emptyOutDir: true
 	},
