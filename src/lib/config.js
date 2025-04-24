@@ -15,7 +15,8 @@ export function validateConfig(config) {
 	if (config.stationsLabels !== undefined) {
 		if (typeof config.stationsLabels !== 'object') {
 			errors.push('"stationsLabels" doit être un objet associatif.')
-		} else if (Array.isArray(config.codeStations)) {
+		}
+		else if (Array.isArray(config.codeStations)) {
 			const unknownKeys = Object.keys(config.stationsLabels).filter(
 				(key) => !config.codeStations.includes(key)
 			)
@@ -27,15 +28,16 @@ export function validateConfig(config) {
 
 	// Vérification des couleurs
 	if (config.colors && typeof config.colors !== 'object') {
-		errors.push('"colors" doit être un objet avec les clés station, selectedStation, Q, H.')
+		errors.push('"colors" doit être un objet avec les clés station et graph')
 	}
 
 	// Valeurs acceptées pour grandeur
-	const validGrandeurValues = ['Q', 'H', 'Q,H', 'H,Q']
+	const validGrandeurValues = ['Q', 'H', 'QmnJ']
 	if (config.grandeurHydro === undefined) {
-		config.grandeurHydro = 'Q,H' // valeur par défaut
-	} else if (!validGrandeurValues.includes(config.grandeurHydro)) {
-		errors.push('"grandeurHydro" doit être "Q", "H", "Q,H" ou "H,Q".')
+		config.grandeurHydro = 'Q' // valeur par défaut
+	}
+	else if (!validGrandeurValues.includes(config.grandeurHydro)) {
+		errors.push('"grandeurHydro" doit être "Q", "H", ou "QmnJ".')
 	}
 
 	// Vérification des jours
@@ -44,8 +46,8 @@ export function validateConfig(config) {
 	}
 
 	// Tri
-	if (config.order && !['asc', 'desc', 'default'].includes(config.order)) {
-		errors.push('"order" doit être "asc", "desc" ou "default".')
+	if (config.sort && !['asc', 'desc'].includes(config.sort)) {
+		errors.push('"sort" doit être "asc", "desc".')
 	}
 
 	// Carte affichée

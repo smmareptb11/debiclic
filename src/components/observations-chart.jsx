@@ -64,6 +64,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 				{
 					label: meta.label,
 					stroke: color,
+					spanGaps: false,
 					width: 2,
 					value: (u, v) => (v != null && !isNaN(v)) ? `${formaterNombreFr(v)} ${meta.unit}` : '-'
 				}

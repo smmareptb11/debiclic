@@ -5,7 +5,7 @@ describe('validateConfig', () => {
 	it('valide une configuration minimale correcte', () => {
 		const config = {
 			codeStations: ['X001'],
-			grandeurHydro: 'Q'
+			grandeurHydro: 'QmnJ'
 		}
 		const { valid, errors } = validateConfig(config)
 		expect(valid).toBe(true)
@@ -32,7 +32,7 @@ describe('validateConfig', () => {
 	it('accepte grandeurHydro "Q,H" comme valeur valide', () => {
 		const config = {
 			codeStations: ['X001'],
-			grandeurHydro: 'Q,H'
+			grandeurHydro: 'Q'
 		}
 		const { valid } = validateConfig(config)
 		expect(valid).toBe(true)
@@ -42,6 +42,6 @@ describe('validateConfig', () => {
 		const config = { codeStations: ['X001'] }
 		const result = validateConfig(config)
 		expect(result.valid).toBe(true)
-		expect(config.grandeurHydro).toBe('Q,H') // mutation directe
+		expect(config.grandeurHydro).toBe('Q') // mutation directe
 	})
 })

@@ -117,16 +117,17 @@
         <select name="grandeurHydro">
           <option value="Q">Débit (Q)</option>
           <option value="H">Hauteur (H)</option>
+          <option value="QmnJ">Débit moyen journalier (QmnJ)</option>
         </select>
       </label>
       <label>
         Nombre de jours (1–30)
         <input type="number" name="days" min="1" max="30" value="30" />
       </label>
+      <!-- Tri des stations selon le dernier débit ou hauteur renvoyé -->
       <label>
         Ordre des stations
-        <select name="order">
-          <option value="default">Défaut</option>
+        <select name="sort">
           <option value="asc">Croissant</option>
           <option value="desc">Décroissant</option>
         </select>
@@ -140,16 +141,8 @@
         <input type="color" name="colorStation" value="#007BFF" />
       </label>
       <label>
-        Couleur station sélectionnée
-        <input type="color" name="colorSelectedStation" value="#FF0000" />
-      </label>
-      <label>
-        Couleur Débit (Q)
-        <input type="color" name="colorQ" value="#007BFF" />
-      </label>
-      <label>
-        Couleur Hauteur (H)
-        <input type="color" name="colorH" value="#AA336A" />
+        Couleur graphique
+        <input type="color" name="colorGraph" value="#FF0000" />
       </label>
     </div>
 
@@ -208,13 +201,11 @@
         stationsLabels,
         colors: {
           station: data.get('colorStation'),
-          selectedStation: data.get('colorSelectedStation'),
-          Q: data.get('colorQ'),
-          H: data.get('colorH')
+          graph: data.get('colorGraph'),
         },
         grandeurHydro: data.get('grandeurHydro'),
         days: parseInt(data.get('days'), 10),
-        order: data.get('order'),
+        sort: data.get('sort'),
         width: data.get('width'),
         height: data.get('height'),
         showMap: data.get('showMap') === 'true'

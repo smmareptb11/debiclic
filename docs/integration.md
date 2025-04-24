@@ -49,13 +49,11 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
     },
     colors: {
       station: "#cccccc",
-      selectedStation: "#000000",
-      Q: "#007BFF",
-      H: "#AA336A"
+      graph: "#007BFF"
     },
     grandeurHydro: "Q",
     days: 15,
-    order: "asc",
+    sort: "asc",
     width: "100%",
     height: 600,
     showMap: true
@@ -68,19 +66,19 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
 
 ## 📚 Paramètres disponibles (avec valeurs par défaut)
 
-| Paramètre         | Type                        | Description                                                                 | Valeur par défaut |
-|-------------------|-----------------------------|-----------------------------------------------------------------------------|-------------------|
-| `container`       | `string` \| `HTMLElement`    | Sélecteur CSS ou élément DOM cible                                          | *(obligatoire)*   |
-| `width`           | `string` \| `number`        | Largeur de l’iframe intégrée                                                | `100%`   |
-| `height`          | `string` \| `number`        | Hauteur de l’iframe intégrée                                                | `100%`   |
-| `codeStations`    | `string[]`                  | Liste des codes stations à afficher                                         | *(obligatoire)*   |
-| `stationsLabels`  | `Record<string, string>`    | Libellés personnalisés par code station                                     | `{}`              |
-| `colors`          | `Record<string, string>`    | Couleurs : `station`, `selectedStation`, `Q`, `H`                           | `{station: '#007BFF', selectedStation: '#FF0000', Q: '#007BFF', H: '#AA336A'}` |
-| `grandeurHydro`   | `'Q'` \| `'H'`               | Type de mesure à afficher (`Q` pour débit, `H` pour hauteur)                | `'Q'`             |
-| `days`            | `number` (1–30)             | Nombre de jours à afficher dans le graphique                                | `30`              |
-| `order`           | `'asc'` \| `'desc'` \| `'default'` | Ordre de tri des stations dans la liste                              | `'desc'`          |
-| `showMap`         | `boolean`                  | Affiche ou masque la carte Leaflet                                          | `true`            |
-| `src`             | `string` *(optionnel)*      | URL personnalisée vers `index.html` si besoin                           | automatique       |
+| Paramètre         | Type                        | Description                                                                                                          | Valeur par défaut |
+|-------------------|-----------------------------|----------------------------------------------------------------------------------------------------------------------|-------------------|
+| `container`       | `string` \| `HTMLElement`   | Sélecteur CSS ou élément DOM cible                                                                                   | *(obligatoire)*   |
+| `width`           | `string` \| `number`        | Largeur de l’iframe intégrée                                                                                         | `100%`            |
+| `height`          | `string` \| `number`        | Hauteur de l’iframe intégrée                                                                                         | `100%`            |
+| `codeStations`    | `string[]`                  | Liste des codes stations à afficher                                                                                  | *(obligatoire)*   |
+| `stationsLabels`  | `Record<string, string>`    | Libellés personnalisés par code station                                                                              | `{}`              |
+| `colors`          | `Record<string, string>`    | Couleurs : `station`, `graph`                                                                                        | `{station: '#007BFF', graph: '#007BFF'}` |
+| `grandeurHydro`   | `'QmnJ'` \|`'Q'` \| `'H'`   | Type de mesure à afficher (`QmnJ` pour débit moyen journalier, `Q` pour débit, `H` pour hauteur)                     | `'Q'`             |
+| `days`            | `number` (1–30)             | Nombre de jours à visible dans le graphique                                                                          | `30`              |
+| `sort`            | `'asc'` \| `'desc'` *(optionnel)*        | Ordre de tri des stations dans la liste                                                                 | `'desc'`          |
+| `showMap`         | `boolean`                   | Affiche ou masque la carte                                                                                           | `true`            |
+| `src`             | `string` *(optionnel)*      | URL personnalisée vers `index.html` si besoin                                                                        | automatique       |
 
 ---
 
@@ -88,6 +86,9 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
 
 - 📄 [Exemple basique](../examples/basic.html)
 - 📄 [Exemple multi-instance](../examples/multi-instance.html)
+- 📄 [Exemple configurable](../examples/custom-config.html)
+- 📄 [Exemple sans carte](../examples/no-map.html)
+- 📄 [Exemple avec plusieurs stations](../examples/stations.html)
 
 ---
 

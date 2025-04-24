@@ -47,13 +47,12 @@ Permettre aux collectivités, acteurs publics ou tout autre site tiers d’inté
     },
     colors: {
       station: "#007BFF",
-      selectedStation: "#FF0000",
-      Q: "#007BFF",
-      H: "#AA336A"
+      graph: "#007BFF"
     },
-    grandeurHydro: "Q",
+    grandeurHydro: "QmnJ",
     days: 15,
-    order: "asc"
+    sort: "desc",
+    showMap: true
   });
 </script>
 ```
