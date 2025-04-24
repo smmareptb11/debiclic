@@ -12,12 +12,6 @@
   font-style: italic;
 }
 
-.station-comment-icon {
-  flex-shrink: 0;
-  font-size: 1rem;
-  opacity: 0.8;
-}
-
 .station-comment-text {
   flex: 1;
   line-height: 1.4;

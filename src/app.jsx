@@ -87,7 +87,7 @@ const App = ({
 
 	return (
 		<ThemeProvider colors={colors}>
-			<div className="App">
+			<div className="app">
 				{showMap && (
 					<Map
 						stations={stations}
