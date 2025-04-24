@@ -12,13 +12,12 @@ const defaultConfig = {
 	colors: {
 		station: '#0D4',
 		selectedStation: '#F0FF',
-		graph: '#0D4',
-		Q: '#00F5',
-		H: '#0F0'
+		graph: '#0D4'
 	},
-	grandeurHydro: 'QmnJ',
-	days: 30,
-	sort: 'desc'
+	grandeurHydro: 'Q',
+	days: 10,
+	sort: 'desc',
+	showMap: true
 }
 
 const renderApp = (config) => {

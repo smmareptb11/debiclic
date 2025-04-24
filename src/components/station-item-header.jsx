@@ -14,19 +14,21 @@ function StationItemHeader({ station, selected, grandeurHydro, onClick }) {
 	return (
 		<div className="station-header" onClick={handleClick}>
 			<div className="station-header-top">
-			<div className="station-info">
-				<div className="station-name">{station.customLabel || station.name}</div>
-				<div className="station-code">{station.codeStation}</div>
-			</div>
+				<div className="station-info">
+					<div className="station-name">{station.customLabel || station.name}</div>
+					<div className="station-code">{station.codeStation}</div>
+				</div>
 
 				{selected && (
 					onClick && <button className="close-button" onClick={handleClick}>X</button>
 				)}
 			</div>
 
-			<div className='station-tags'>
-				{station.lastObservation.resultat_obs_elab && (
-					<Tag type="info">{label} : {formaterNombreFr(station.lastObservation.resultat_obs_elab * coef)} {unit}</Tag>
+			<div className="station-tags">
+				{station.lastObservation ? (
+					<Tag type="info">{label} : {formaterNombreFr(station.lastObservation.resultat_obs * coef)} {unit}</Tag>
+				) : (
+					<Tag type="warning">Aucune donnée disponible{['H', 'Q'].includes(grandeurHydro) ? '' : ' depuis 24h'}</Tag>
 				)}
 			</div>
 			

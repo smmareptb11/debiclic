@@ -1,3 +1,4 @@
+
 .export-btn {
   margin-left: auto;
 }
@@ -18,3 +19,47 @@
   align-items: center;
   height: 300px;
 }
+
+.u-select {
+  pointer-events: all;
+  cursor: grabbing;
+}
+
+.u-grip-l {
+  position: absolute;
+  left: -5px;
+  width: 10px;
+  height: 100%;
+  background: red;
+  cursor: ew-resize;
+}
+
+.u-grip-r {
+  position: absolute;
+  right: -5px;
+  width: 10px;
+  height: 100%;
+  background: blue;
+  cursor: ew-resize;
+}
+
+.chart-ranger {
+  margin: 0 75px;
+}
+
+.chart-ranger .u-select {
+  pointer-events: all;
+  cursor: grabbing;
+}
+.chart-ranger .u-grip-l,
+.chart-ranger .u-grip-r {
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 100%;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid #666;
+  cursor: ew-resize;
+}
+.chart-ranger .u-grip-l { left: -5px; }
+.chart-ranger .u-grip-r { right: -5px; }

@@ -3,7 +3,7 @@ import StationList from './components/stations-list'
 import StationItem from './components/station-item'
 import Map from './components/map'
 import './app.css'
-import { fetchLastObservationsElab, fetchStations } from './lib/api'
+import { fetchLastObservation, fetchStations } from './lib/api'
 import { ThemeProvider } from './contexts/theme-context'
 import Loader from './components/loader'
 import Tag from './components/tag'
@@ -41,8 +41,9 @@ const App = ({
 				const stations = await fetchStations(codeStations)
 				const activeStations = stations.filter(station => station.en_service)
 				const stationsData = await Promise.all(activeStations.map(async (station) => {
-					const lastObservation = await fetchLastObservationsElab({ codeStation: station.code_station, grandeurHydro })
-				return {
+					const lastObservation = await fetchLastObservation({ codeStation: station.code_station, grandeurHydro })
+					
+					return {
 						codeStation: station.code_station,
 						customLabel: stationsLabels[station.code_station],
 						name: station.libelle_station,
@@ -50,18 +51,20 @@ const App = ({
 						lng: station.longitude_station,
 						enService: station.en_service,
 						commentaire: station.commentaire_station,
-						lastObservation: lastObservation.data[lastObservation.data.length - 1] || {date_obs_elab: null, valeur_obs_elab: null}
+						lastObservation
 					}
 				}))
 
 				if (sort !== 'default') {
 					stationsData.sort((a, b) => {
-						if (a.lastObservation.date_obs_elab === null) return 1
-						if (b.lastObservation.date_obs_elab === null) return -1
-						return sort === 'asc' ? a.lastObservation.date_obs_elab - b.lastObservation.date_obs_elab : b.lastObservation.date_obs_elab - a.lastObservation.date_obs_elab
+						if (!a.lastObservation) return 1
+						if (!b.lastObservation) return -1
+						return sort === 'asc'
+							? a.lastObservation.date_obs - b.lastObservation.date_obs
+							: b.lastObservation.date_obs - a.lastObservation.date_obs
 					})
 				}
-	
+
 				setStations(stationsData)
 			}
 			catch (error) {
