@@ -21,7 +21,19 @@ const defaultConfig = {
 }
 
 const renderApp = (config) => {
-	render(<App {...config} />, document.getElementById('app'))
+	const today = new Date()
+	const lastMonth = new Date()
+	lastMonth.setMonth(lastMonth.getMonth() - 1)
+	lastMonth.setHours(0, 0, 0, 0)
+	
+	render(
+		<App
+			{...config}
+			startDate={lastMonth}
+			endDate={today}
+		/>,
+		document.getElementById('app')
+	)
 }
 
 const isDev = import.meta.env.MODE === 'development'

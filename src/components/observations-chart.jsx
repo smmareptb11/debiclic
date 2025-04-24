@@ -20,7 +20,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		if (!zoomRef.current || !data) return
 
 		// Convertir et trier les données par date croissante (en ms)
-		const zipped = data.x.map((t, i) => [Date.parse(t), Number((data.y[i] * meta.coef).toFixed(2))])
+		const zipped = data.x.map((t, i) => [Date.parse(t), data.y[i] ? Number((data.y[i] * meta.coef).toFixed(2)) : null])
 		zipped.sort((a, b) => a[0] - b[0])
 		const xVals = zipped.map(d => d[0])
 		const yVals = zipped.map(d => d[1])
@@ -31,6 +31,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		const nowMs = xVals[xVals.length - 1]
 		const initMin = nowMs - daysClamped * 86400 * 1000
 		const initMax = nowMs
+
+		setVisibleDates({ startDate: new Date(initMin), endDate: new Date(initMax) })
 
 		if (uZoomedRef.current) {
 			uZoomedRef.current.destroy()
@@ -72,113 +74,107 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		uZoomedRef.current = new UPlot(options, transformedData, zoomRef.current)
 
 		// Ranger chart
-		if (daysClamped < data.x.length) {
-			const rangerOpts = {
-				width: options.width - 100,
-				height: 20,
-				axes: [
-				  { show: false },
-				  { show: false }
+		const rangerOpts = {
+			width: options.width - 100,
+			height: 20,
+			axes: [
+				{ show: false },
+				{ show: false }
+			],
+			scales: { x: { time: true } },
+			series: [{}, { stroke: color, width: 1, fill: color, fillAlpha: 0.1 }],
+			cursor: { x: false, y: false, points: { show: false }, drag: { setScale: false,setSelect: true,x: true,y: false } },
+			legend: { show: false },
+			select: { show: true },
+			hooks: {
+				ready: [
+					uRanger => {
+					// position initiale de la sélection
+						const left = Math.round(uRanger.valToPos(initMin, 'x'))
+						const width = Math.round(uRanger.valToPos(initMax, 'x')) - left
+						const height = uRanger.bbox.height
+						uRanger.setSelect({ left, width, height }, false)
+
+						// helpers from example
+						const debounce = fn => {
+							let raf
+							return (...args) => {
+								if (raf) return
+								raf = requestAnimationFrame(() => { fn(...args); raf = null })
+							}
+						}
+						const on = (ev, el, fn) => el.addEventListener(ev, fn)
+						const off = (ev, el, fn) => el.removeEventListener(ev, fn)
+						const placeDiv = cls => {
+							const el = document.createElement('div')
+							el.classList.add(cls)
+							selector.appendChild(el)
+							return el
+						}
+
+						let x0, lft0, wid0
+
+						function update(newLft, newWid) {
+							const newRgt = newLft + newWid
+							const maxRgt = uRanger.bbox.width
+							if (newLft >= 0 && newRgt <= maxRgt) {
+								uRanger.setSelect({ left: newLft, width: newWid, height: uRanger.bbox.height }, false)
+								// update zoomed chart
+								const min = uRanger.posToVal(newLft, 'x')
+								const max = uRanger.posToVal(newLft + newWid, 'x')
+								uZoomedRef.current.setScale('x', { min, max })
+								setVisibleDates({ startDate: new Date(min), endDate: new Date(max) })
+							}
+						}
+
+						function bindMove(e, onMove) {
+							x0 = e.clientX
+							lft0 = uRanger.select.left
+							wid0 = uRanger.select.width
+							const _onMove = debounce(evt => onMove(evt.clientX - x0))
+							on('mousemove', document, _onMove)
+							const _onUp = () => {
+								off('mousemove', document, _onMove)
+								off('mouseup', document, _onUp)
+							}
+							on('mouseup', document, _onUp)
+							e.stopPropagation()
+						}
+
+						const selector = uRanger.root.querySelector('.u-select')
+						// create grips for visual only
+						placeDiv('u-grip-l')
+						placeDiv('u-grip-r')
+						// bind pan only (fixed width)
+						on('mousedown', selector, e => bindMove(e, diff => update(lft0 + diff, wid0)))
+						const gripL = selector.querySelector('.u-grip-l')
+						const gripR = selector.querySelector('.u-grip-r')
+						on('mousedown', gripL, e => bindMove(e, diff => update(lft0 + diff, wid0)))
+						on('mousedown', gripR, e => bindMove(e, diff => update(lft0 + diff, wid0)))
+					}
 				],
-				scales: { x: { time: true } },
-				series: [{}, { stroke: color, width: 1, fill: color, fillAlpha: 0.1 }],
-				cursor: { x: false, y: false, points: { show: false }, drag: { setScale: false,setSelect: true,x: true,y: false } },
-				legend: { show: false },
-				select: { show: true },
-				hooks: {
-				  ready: [
-				    uRanger => {
-				      // position initiale de la sélection
-				      const left = Math.round(uRanger.valToPos(initMin, 'x'))
-				      const width = Math.round(uRanger.valToPos(initMax, 'x')) - left
-				      const height = uRanger.bbox.height
-				      uRanger.setSelect({ left, width, height }, false)
-
-				      // helpers from example
-				      const debounce = fn => {
-				        let raf
-				        return (...args) => {
-				          if (raf) return
-				          raf = requestAnimationFrame(() => { fn(...args); raf = null })
-				        }
-				      }
-				      const on = (ev, el, fn) => el.addEventListener(ev, fn)
-				      const off = (ev, el, fn) => el.removeEventListener(ev, fn)
-				      const placeDiv = cls => {
-				        const el = document.createElement('div')
-				        el.classList.add(cls)
-				        selector.appendChild(el)
-				        return el
-				      }
-
-				      let x0, lft0, wid0
-
-				      function update(newLft, newWid) {
-				        const newRgt = newLft + newWid
-				        const maxRgt = uRanger.bbox.width
-				        if (newLft >= 0 && newRgt <= maxRgt) {
-				          uRanger.setSelect({ left: newLft, width: newWid, height: uRanger.bbox.height }, false)
-				          // update zoomed chart
-				          const min = uRanger.posToVal(newLft, 'x')
-				          const max = uRanger.posToVal(newLft + newWid, 'x')
-				          uZoomedRef.current.setScale('x', { min, max })
-				          setVisibleDates({ firstDate: new Date(min), lastDate: new Date(max) })
-				        }
-				      }
-
-				      function bindMove(e, onMove) {
-				        x0 = e.clientX
-				        lft0 = uRanger.select.left
-				        wid0 = uRanger.select.width
-				        const _onMove = debounce(evt => onMove(evt.clientX - x0))
-				        on('mousemove', document, _onMove)
-				        const _onUp = () => {
-				          off('mousemove', document, _onMove)
-				          off('mouseup', document, _onUp)
-				        }
-				        on('mouseup', document, _onUp)
-				        e.stopPropagation()
-				      }
-
-				      const selector = uRanger.root.querySelector('.u-select')
-				      // create grips for visual only
-				      placeDiv('u-grip-l')
-				      placeDiv('u-grip-r')
-				      // bind pan only (fixed width)
-				      on('mousedown', selector, e => bindMove(e, diff => update(lft0 + diff, wid0)))
-				      const gripL = selector.querySelector('.u-grip-l')
-				      const gripR = selector.querySelector('.u-grip-r')
-				      on('mousedown', gripL, e => bindMove(e, diff => update(lft0 + diff, wid0)))
-				      on('mousedown', gripR, e => bindMove(e, diff => update(lft0 + diff, wid0)))
-				    }
-				  ],
-				  setSelect: [
-				    u => {
-				      const { left, width } = u.select
-				      const min = u.posToVal(left, 'x')
-				      const max = u.posToVal(left + width, 'x')
-				      uZoomedRef.current.setScale('x', { min, max })
-				    }
-				  ]
-				}
+				setSelect: [
+					u => {
+						const { left, width } = u.select
+						const min = u.posToVal(left, 'x')
+						const max = u.posToVal(left + width, 'x')
+						uZoomedRef.current.setScale('x', { min, max })
+					}
+				]
 			}
+		}
 
-			if (!uRangerRef.current) {
-				uRangerRef.current = new UPlot(rangerOpts, transformedData, rangerRef.current)
-			}
-			else {
-				uRangerRef.current.setData(transformedData)
-			}
-			const left = uRangerRef.current.valToPos(initMin, 'x')
-			const right = uRangerRef.current.valToPos(initMax, 'x')
-			uRangerRef.current.setSelect({ left, width: right - left, height: uRangerRef.current.bbox.height }, false)
+		if (!uRangerRef.current) {
+			uRangerRef.current = new UPlot(rangerOpts, transformedData, rangerRef.current)
 		}
 		else {
-			uRangerRef.current?.destroy()
-			uRangerRef.current = null
+			uRangerRef.current.setData(transformedData)
 		}
+		const left = uRangerRef.current.valToPos(initMin, 'x')
+		const right = uRangerRef.current.valToPos(initMax, 'x')
+		uRangerRef.current.setSelect({ left, width: right - left, height: uRangerRef.current.bbox.height }, false)
 
-		// Nettoyage lors du démontage ou d'un changement de dépendances
+		// Cleanup on unmount
 		return () => {
 			uZoomedRef.current?.destroy()
 			uRangerRef.current?.destroy()
@@ -208,7 +204,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 	return (
 		<div className="chart-wrapper">
 			<div className="chart-container">
-				{ days < data.x.length && <div ref={rangerRef} className="chart-ranger" /> }
+				{ <div ref={rangerRef} className="chart-ranger" /> }
 				<div ref={zoomRef} />
 			</div>
 

@@ -11,16 +11,22 @@ export const HYDRO_META = {
 	HIXnJ: { label: 'Hauteur max. journalière', unit: 'mm',   coef: 1,        withTime: false }
 }
 
-export function parseObservations(observations) {
+export function parseObservations(observations, startDate, endDate) {
 	const grouped = {}
 
 	for (const obs of observations) {
 		const key = obs.grandeurHydro
 		
-		if (!grouped[key]) grouped[key] = []
-		
+		if (!grouped[key]) {
+			grouped[key] = [[startDate, null]] // Add oldest date
+		}
+
 		// On conserve les données sous forme [timestamp, valeur]
 		grouped[key].push([new Date(obs.dateObs), obs.resultatObs])
+	}
+
+	for (const key in grouped) {
+		grouped[key].push([endDate, null]) // Add most recent date
 	}
 
 	// Construction du résultat pour chaque grandeur : [timestamps[], valeurs[]]
@@ -33,13 +39,4 @@ export function parseObservations(observations) {
 	}
 
 	return result
-}
-
-
-export function getFirstAndLastObservationDate(observations) {
-	const dates = observations.map(obs => new Date(obs.dateObs))
-	const firstDate = new Date(Math.min(...dates))
-	const lastDate = new Date(Math.max(...dates))
-
-	return { firstDate, lastDate }
 }

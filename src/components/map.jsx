@@ -3,7 +3,7 @@ import Leaflet from 'leaflet'
 
 import 'leaflet/dist/leaflet.css'
 import './map.css'
-import ThemeContext from '../contexts/theme-context'
+import ConfigContext from '../contexts/config-context'
 
 import.meta.env.DEBICLIC_DOC_URL
 
@@ -43,7 +43,7 @@ const Map = ({ stations, selectedStationCode, hoveredStationCode, onHoverStation
 	const mapRef = useRef(null)
 	const markersRef = useRef({})
 
-	const { colors } = useContext(ThemeContext)
+	const { colors } = useContext(ConfigContext)
 
 	const fitToStationsBounds = (map, stations) => {
 		if (stations.length > 0) {

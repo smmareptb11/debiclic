@@ -4,7 +4,7 @@ import StationItem from './components/station-item'
 import Map from './components/map'
 import './app.css'
 import { fetchLastObservation, fetchStations } from './lib/api'
-import { ThemeProvider } from './contexts/theme-context'
+import { ConfigProvider } from './contexts/config-context'
 import Loader from './components/loader'
 import Tag from './components/tag'
 
@@ -14,6 +14,8 @@ const App = ({
 	stationsLabels = {},
 	colors = { station: '#007BFF',selectedStation: '#FF0000', graph: '#007BFF' },
 	grandeurHydro= 'QmnJ',
+	startDate,
+	endDate,
 	days = 30,
 	sort = 'default'
 }) => {
@@ -86,7 +88,13 @@ const App = ({
 	}, [stations])
 
 	return (
-		<ThemeProvider colors={colors}>
+		<ConfigProvider
+			startDate={startDate}
+			endDate={endDate}
+			days={days}
+			grandeurHydro={grandeurHydro}
+			colors={colors}
+		>
 			<div className="app">
 				{showMap && (
 					<Map
@@ -110,11 +118,6 @@ const App = ({
 							<div className="station-details-view">
 								<StationItem
 									station={stations.find(({ codeStation }) => codeStation === selectedStationCode)}
-									graphProps={{
-										grandeurHydro,
-										color: colors.graph,
-										days
-									}}
 									onClick={stations.length > 1 ? handleClickStation : null}
 								/>
 							</div>
@@ -131,7 +134,7 @@ const App = ({
 					)}
 				</div>
 			</div>
-		</ThemeProvider>
+		</ConfigProvider>
 	)
 }
 

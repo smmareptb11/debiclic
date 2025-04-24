@@ -1,18 +1,21 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'preact/compat'
+import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'preact/compat'
 import './station-item.css'
 import { fullDateFormatter, getShortIsoString } from '../util/date'
 import StationComment from './station-comment'
 import Tag from './tag'
 import StationItemHeader from './station-item-header'
 import ObservationChart from './observations-chart'
-import { getFirstAndLastObservationDate, parseObservations } from '../lib/observations'
+import { parseObservations } from '../lib/observations'
 import { getObservations } from '../lib/api'
 import Loader from './loader'
+import ConfigContext from '../contexts/config-context'
 
-function StationItem({ station, graphProps, onClick }) {
+function StationItem({ station, onClick }) {
+	const { colors, startDate, endDate, days, grandeurHydro } = useContext(ConfigContext)
+
 	const [observations, setObservations] = useState([])
 	const [isLoading, setIsLoading] = useState(false)
-	const [visibleDates, setVisibleDates] = useState(null)
+	const [visibleDates, setVisibleDates] = useState({ startDate, endDate })
 	const [error, setError] = useState(false)
 	
 	const handleClose = useCallback(() => {
@@ -24,33 +27,21 @@ function StationItem({ station, graphProps, onClick }) {
 			return null
 		}
 		
-		const parsedData = parseObservations(observations?.data)
-		return parsedData[graphProps.grandeurHydro] || []
+		const parsedData = parseObservations(observations?.data, startDate, endDate)
+		return parsedData[grandeurHydro] || []
 
-	}, [observations])
-
-	useEffect(() => {
-		const observationsData = observations?.data || []
-		setVisibleDates(observationsData.length > 0
-			? getFirstAndLastObservationDate(observations?.data)
-			: null
-		)
 	}, [observations])
 
 	useEffect(() => {
 		async function fetchMonthlyObservations(codeStation) {
-			const today = new Date()
-			const lastMonth = new Date(today)
-			lastMonth.setMonth(lastMonth.getMonth() - 1)
-			lastMonth.setDate(lastMonth.getDate() + 1)
 			try {
 				const observations = await getObservations({
 					codeStation,
-					grandeurHydro: graphProps.grandeurHydro,
-					startDate: lastMonth,
-					endDate: today
+					grandeurHydro,
+					startDate,
+					endDate
 				})
-						
+
 				setObservations(observations)
 			}
 			catch (error) {
@@ -64,7 +55,7 @@ function StationItem({ station, graphProps, onClick }) {
 		setIsLoading(true)
 		setError(false)
 		fetchMonthlyObservations(station.codeStation)
-	}, [station.codeStation, graphProps.grandeurHydro])
+	}, [station.codeStation, grandeurHydro, startDate, endDate])
 
 	const exportPNG = useCallback(canvas => {
 		const exportCanvas = document.createElement('canvas')
@@ -76,10 +67,10 @@ function StationItem({ station, graphProps, onClick }) {
 		ctx.drawImage(canvas, 0, 0)
 
 		const link = document.createElement('a')
-		link.download = `${station.codeStation}-${graphProps.grandeurHydro}_${getShortIsoString(visibleDates.firstDate)}_${getShortIsoString(visibleDates.lastDate)}.png`
+		link.download = `${station.codeStation}-${grandeurHydro}_${getShortIsoString(visibleDates.startDate)}_${getShortIsoString(visibleDates.endDate)}.png`
 		link.href = exportCanvas.toDataURL('image/png')
 		link.click()
-	}, [graphProps.grandeurHydro])
+	}, [grandeurHydro])
 
 	return (
 		<div
@@ -90,7 +81,7 @@ function StationItem({ station, graphProps, onClick }) {
 				<StationItemHeader
 					selected
 					station={station}
-					grandeurHydro={graphProps.grandeurHydro}
+					grandeurHydro={grandeurHydro}
 					onClick={onClick ? handleClose : null}
 				/>
 			</div>
@@ -108,9 +99,9 @@ function StationItem({ station, graphProps, onClick }) {
 							{data ? (
 								<ObservationChart
 									data={data}
-									color={graphProps.color}
-									grandeurHydro={graphProps.grandeurHydro}
-									days={graphProps.days}
+									color={colors.graph}
+									grandeurHydro={grandeurHydro}
+									days={days}
 									onExportPNG={exportPNG}
 									setVisibleDates={setVisibleDates}
 								/>
@@ -125,7 +116,7 @@ function StationItem({ station, graphProps, onClick }) {
 
 				{visibleDates && (
 					<div className="period-displayed">
-						Période affichée : {fullDateFormatter(visibleDates.firstDate.toISOString())} - {fullDateFormatter(visibleDates.lastDate.toISOString())}
+						Période affichée : {fullDateFormatter(visibleDates.startDate.toISOString())} - {fullDateFormatter(visibleDates.endDate.toISOString())}
 					</div>
 				)}
 
