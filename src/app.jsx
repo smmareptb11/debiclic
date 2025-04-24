@@ -13,7 +13,7 @@ const App = ({
 	codeStations = [],
 	stationsLabels = {},
 	colors = { station: '#007BFF',selectedStation: '#FF0000', graph: '#007BFF' },
-	grandeurHydro= 'QmnJ',
+	grandeurHydro= 'Q',
 	startDate,
 	endDate,
 	days = 30,
