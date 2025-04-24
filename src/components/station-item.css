@@ -32,3 +32,9 @@
   align-items: center;
   height: 200px;
 }
+
+.period-displayed {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777;
+}

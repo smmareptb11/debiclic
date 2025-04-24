@@ -8,7 +8,7 @@ import './observations-chart.css'
 import { HYDRO_META } from '../lib/observations'
 import { formaterNombreFr } from '../util/number'
 
-const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, onExportPNG }) => {
+const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, onExportPNG, setVisibleDates }) => {
 	const zoomRef = useRef(null)
 	const uZoomedRef = useRef()
 	const rangerRef = useRef(null)
@@ -122,6 +122,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 				          const min = uRanger.posToVal(newLft, 'x')
 				          const max = uRanger.posToVal(newLft + newWid, 'x')
 				          uZoomedRef.current.setScale('x', { min, max })
+				          setVisibleDates({ firstDate: new Date(min), lastDate: new Date(max) })
 				        }
 				      }
 

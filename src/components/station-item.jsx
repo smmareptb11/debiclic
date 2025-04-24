@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'preact/compat'
 import './station-item.css'
-import { getShortIsoString } from '../util/date'
+import { fullDateFormatter, getShortIsoString } from '../util/date'
 import StationComment from './station-comment'
 import Tag from './tag'
 import StationItemHeader from './station-item-header'
@@ -112,6 +112,7 @@ function StationItem({ station, graphProps, onClick }) {
 									grandeurHydro={graphProps.grandeurHydro}
 									days={graphProps.days}
 									onExportPNG={exportPNG}
+									setVisibleDates={setVisibleDates}
 								/>
 							) : (
 								<div className="loader-container">
@@ -120,6 +121,12 @@ function StationItem({ station, graphProps, onClick }) {
 							)}
 						</div>
 					)
+				)}
+
+				{visibleDates && (
+					<div className="period-displayed">
+						Période affichée : {fullDateFormatter(visibleDates.firstDate.toISOString())} - {fullDateFormatter(visibleDates.lastDate.toISOString())}
+					</div>
 				)}
 
 				{station.commentaire && (
