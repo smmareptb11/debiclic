@@ -35,7 +35,7 @@ const App = ({
 	}, [selectedStationCode])
 
 	useEffect(() => {
-		if (!codeStations.length) return
+		if (codeStations.length === 0) return
 		setIsLoading(true)
 		
 		const getStations = async () => {
@@ -67,6 +67,11 @@ const App = ({
 					})
 				}
 
+				if (stationsData.length === 1) {
+					const [station] = stationsData
+					setSelectedStationCode(station.codeStation)
+				}
+
 				setStations(stationsData)
 			}
 			catch (error) {
@@ -78,14 +83,7 @@ const App = ({
 		}
 
 		getStations()
-	}, [codeStations, sort, grandeurHydro, stationsLabels])
-
-	// Si une seule station, on la sélectionne par défaut
-	useEffect(() => {
-		if (stations.length === 1) {
-			setSelectedStationCode(stations[0].codeStation)
-		}
-	}, [stations])
+	}, [])
 
 	return (
 		<ConfigProvider
@@ -118,7 +116,7 @@ const App = ({
 							<div className="station-details-view">
 								<StationItem
 									station={stations.find(({ codeStation }) => codeStation === selectedStationCode)}
-									onClick={stations.length > 1 ? handleClickStation : null}
+									onClick={handleClickStation}
 								/>
 							</div>
 						) : (

@@ -82,7 +82,7 @@ function StationItem({ station, onClick }) {
 					selected
 					station={station}
 					grandeurHydro={grandeurHydro}
-					onClick={onClick ? handleClose : null}
+					onClick={handleClose}
 				/>
 			</div>
 
