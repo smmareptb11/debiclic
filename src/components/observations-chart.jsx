@@ -77,7 +77,95 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 			],
 			cursor: { drag: { setScale: false, setSelect: false }, bind: { dblclick: () => null } },
 			select: { show: false },
-			legend: { show: true }
+			legend: { show: false },
+			hooks: {
+				init: [
+				  u => {
+					const tooltip = document.createElement("div")
+					tooltip.id = "tooltip"
+					document.body.appendChild(tooltip)
+			  
+					let bLeft = 0
+					let bTop = 0
+			  
+					function syncBounds() {
+					  if (zoomRef.current) {
+						const bbox = zoomRef.current.getBoundingClientRect()
+						bLeft = bbox.left
+						bTop = bbox.top
+					  }
+					}
+			  
+					syncBounds()
+					window.addEventListener('resize', syncBounds)
+			  
+					u.over.addEventListener('mouseenter', () => {
+					  tooltip.style.display = "block"
+					})
+					u.over.addEventListener('mouseleave', () => {
+					  tooltip.style.display = "none"
+					})
+			  
+					u.over._tooltip = tooltip
+					u.over._syncBounds = syncBounds
+				  }
+				],
+				setCursor: [
+					u => {
+					  const tooltip = u.over._tooltip
+					  const { left, top, idx } = u.cursor
+				  
+					  if (idx == null || idx < 0 || idx >= u.data[0].length) {
+						tooltip.style.display = "none"
+						return
+					  }
+				  
+					  const xVal = u.data[0][idx]
+					  const yVal = u.data[1][idx]
+				  
+					  if (xVal == null || yVal == null) {
+						tooltip.style.display = "none"
+						return
+					  }
+				  
+					  tooltip.style.display = "block"
+					  tooltip.innerHTML = `
+					    <div class="date">${fullDateTimeFormatter(new Date(xVal))}</div>
+					    <div class="value">${meta.label} : ${formaterNombreFr(yVal)} ${meta.unit}</div>
+					  `
+				  
+					  const bbox = u.over.getBoundingClientRect()
+					  const tooltipWidth = 150
+					  const tooltipHeight = 40
+				  
+					  let pageX = left + bbox.left
+					  let pageY = top + bbox.top
+				  
+					  if (pageX + tooltipWidth + 10 > window.innerWidth) {
+						pageX = pageX - tooltipWidth - 10
+					  } else {
+						pageX = pageX + 10
+					  }
+				  
+					  if (pageY + tooltipHeight + 10 > window.innerHeight) {
+						pageY = pageY - tooltipHeight - 10
+					  } else {
+						pageY = pageY + 10
+					  }
+				  
+					  tooltip.style.left = `${pageX}px`
+					  tooltip.style.top = `${pageY}px`
+					}
+				  ],
+				destroy: [
+				  u => {
+					const tooltip = u.over._tooltip
+					const syncBounds = u.over._syncBounds
+					if (tooltip?.parentNode) tooltip.parentNode.removeChild(tooltip)
+					window.removeEventListener('resize', syncBounds)
+				  }
+				]
+			  }
 		}
 
 		uZoomedRef.current = new UPlot(options, transformedData, zoomRef.current)
@@ -98,13 +186,11 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 			hooks: {
 				ready: [
 					uRanger => {
-					// position initiale de la sélection
 						const left = Math.round(uRanger.valToPos(initMin, 'x'))
 						const width = Math.round(uRanger.valToPos(initMax, 'x')) - left
 						const height = uRanger.bbox.height
 						uRanger.setSelect({ left, width, height }, false)
 
-						// helpers from example
 						const debounce = fn => {
 							let raf
 							return (...args) => {
