@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef } from 'preact/compat'
 import Leaflet from 'leaflet'
+import debiclicLogo from '../../assets/debiclic-logo.svg'
 
 import 'leaflet/dist/leaflet.css'
 import './map.css'
@@ -20,7 +21,7 @@ function createInfoControl() {
 		div.style.margin = '10px'
 		// Set the inner HTML with a link to the documentation
 		div.innerHTML = `<a href="${DEBICLIC_DOC_URL}" target="_blank" style="text-decoration: none; color: inherit;">` +
-      '<img src="/assets/debiclic-logo.png" alt="Debiclic Logo" style="height:20px; vertical-align:middle; margin-right:5px;" />' +
+      `<img src="${debiclicLogo}" alt="Debiclic Logo" style="height:20px; vertical-align:middle; margin-right:5px;" />` +
       'Documentation</a>'
 		return div
 	}

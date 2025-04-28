@@ -29,7 +29,7 @@ describe('validateConfig', () => {
 		expect(errors[0]).toMatch(/stationsLabels.*clés inconnues/i)
 	})
 
-	it('accepte grandeurHydro "Q,H" comme valeur valide', () => {
+	it('accepte grandeurHydro "Q" comme valeur valide', () => {
 		const config = {
 			codeStations: ['X001'],
 			grandeurHydro: 'Q'
@@ -38,10 +38,89 @@ describe('validateConfig', () => {
 		expect(valid).toBe(true)
 	})
 
-	it('définit grandeurHydro = "Q,H" si non fourni', () => {
+	it('définit grandeurHydro = "Q" si non fourni', () => {
 		const config = { codeStations: ['X001'] }
 		const result = validateConfig(config)
 		expect(result.valid).toBe(true)
 		expect(config.grandeurHydro).toBe('Q') // mutation directe
+	})
+	it('rejette si grandeurHydro est invalide', () => {
+		const config = {
+			codeStations: ['X001'],
+			grandeurHydro: 'INVALID'
+		}
+		const { valid, errors } = validateConfig(config)
+		expect(valid).toBe(false)
+		expect(errors).toContain('"grandeurHydro" doit être "Q", "H", ou "QmnJ".')
+	})
+
+	it('rejette si colors n\'est pas un objet', () => {
+		const config = {
+			codeStations: ['X001'],
+			colors: 'rouge'
+		}
+		const { valid, errors } = validateConfig(config)
+		expect(valid).toBe(false)
+		expect(errors).toContain('"colors" doit être un objet avec les clés station et graph')
+	})
+
+	it('rejette si days est hors bornes', () => {
+		const config = {
+			codeStations: ['X001'],
+			days: 40
+		}
+		const { valid, errors } = validateConfig(config)
+		expect(valid).toBe(false)
+		expect(errors).toContain('"days" doit être un nombre entre 1 et 30.')
+	})
+
+	it('rejette si sort est invalide', () => {
+		const config = {
+			codeStations: ['X001'],
+			sort: 'random'
+		}
+		const { valid, errors } = validateConfig(config)
+		expect(valid).toBe(false)
+		expect(errors).toContain('"sort" doit être "asc", "desc" ou "default".')
+	})
+
+	it('rejette si showMap n\'est pas un booléen', () => {
+		const config = {
+			codeStations: ['X001'],
+			showMap: 'yes'
+		}
+		const { valid, errors } = validateConfig(config)
+		expect(valid).toBe(false)
+		expect(errors).toContain('"showMap" doit être un booléen.')
+	})
+
+	it('rejette si width n\'est pas une chaîne ou un nombre', () => {
+		const config = {
+			codeStations: ['X001'],
+			width: {}
+		}
+		const { valid, errors } = validateConfig(config)
+		expect(valid).toBe(false)
+		expect(errors).toContain('"width" doit être une chaîne ou un nombre.')
+	})
+
+	it('rejette si height n\'est pas une chaîne ou un nombre', () => {
+		const config = {
+			codeStations: ['X001'],
+			height: []
+		}
+		const { valid, errors } = validateConfig(config)
+		expect(valid).toBe(false)
+		expect(errors).toContain('"height" doit être une chaîne ou un nombre.')
+	})
+
+	it('rejette si container n\'est pas une chaîne ou un élément HTML', () => {
+		const config = {
+			codeStations: ['X001'],
+			container: 42
+		}
+		const { valid, errors } = validateConfig(config)
+		expect(valid).toBe(false)
+		expect(errors).toContain('"container" doit être un sélecteur CSS (string).')
 	})
 })
