@@ -7,6 +7,7 @@ import { fetchLastObservation, fetchStations } from './lib/api'
 import { ConfigProvider } from './contexts/config-context'
 import Loader from './components/loader'
 import Tag from './components/tag'
+import { sortStations } from './lib/stations'
 
 const App = ({
 	showMap = true,
@@ -37,14 +38,14 @@ const App = ({
 	useEffect(() => {
 		if (codeStations.length === 0) return
 		setIsLoading(true)
-		
+
 		const getStations = async () => {
 			try {
 				const stations = await fetchStations(codeStations)
 				const activeStations = stations.filter(station => station.en_service)
 				const stationsData = await Promise.all(activeStations.map(async (station) => {
 					const lastObservation = await fetchLastObservation({ codeStation: station.code_station, grandeurHydro })
-					
+
 					return {
 						codeStation: station.code_station,
 						customLabel: stationsLabels[station.code_station],
@@ -57,19 +58,12 @@ const App = ({
 					}
 				}))
 
-				if (sort !== 'default') {
-					stationsData.sort((a, b) => {
-						if (!a.lastObservation) return 1
-						if (!b.lastObservation) return -1
-						return sort === 'asc'
-							? a.lastObservation.date_obs - b.lastObservation.date_obs
-							: b.lastObservation.date_obs - a.lastObservation.date_obs
-					})
-				}
-
 				if (stationsData.length === 1) {
 					const [station] = stationsData
 					setSelectedStationCode(station.codeStation)
+				}
+				else {
+					sortStations(stationsData, sort, codeStations)
 				}
 
 				setStations(stationsData)
