@@ -53,7 +53,6 @@ const App = ({
 						lat: station.latitude_station,
 						lng: station.longitude_station,
 						enService: station.en_service,
-						commentaire: station.commentaire_station,
 						lastObservation
 					}
 				}))

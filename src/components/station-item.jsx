@@ -1,7 +1,6 @@
 import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'preact/compat'
 import './station-item.css'
-import { fullDateFormatter, getShortIsoString } from '../util/date'
-import StationComment from './station-comment'
+import { getShortIsoString } from '../util/date'
 import Tag from './tag'
 import StationItemHeader from './station-item-header'
 import ObservationChart from './observations-chart'
@@ -110,16 +109,6 @@ function StationItem({ station, onClick }) {
 							)}
 						</div>
 					)
-				)}
-
-				{visibleDates && (
-					<div className="period-displayed">
-						Période affichée : {fullDateFormatter(visibleDates.startDate.toISOString())} - {fullDateFormatter(visibleDates.endDate.toISOString())}
-					</div>
-				)}
-
-				{station.commentaire && (
-					<StationComment comment={station.commentaire} />
 				)}
 			</div>
 		</div>

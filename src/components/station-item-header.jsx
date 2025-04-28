@@ -3,6 +3,7 @@ import './station-item-header.css'
 import Tag from './tag'
 import { HYDRO_META } from '../lib/observations'
 import { formaterNombreFr } from '../util/number'
+import { X } from 'lucide-react'
 
 function StationItemHeader({ station, selected, grandeurHydro, onClick }) {
 	const { label, unit, coef } = HYDRO_META[grandeurHydro]
@@ -21,7 +22,9 @@ function StationItemHeader({ station, selected, grandeurHydro, onClick }) {
 				</div>
 
 				{selected && onClick && (
-					<button className="close-button" onClick={handleClick}>X</button>
+					<button className="close-button" onClick={handleClick}>
+						<X />
+					</button>
 				)}
 			</div>
 

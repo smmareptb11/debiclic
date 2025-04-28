@@ -1,7 +1,21 @@
-.export-btn {
-  margin-left: auto;
-  margin: 1rem 0;
+.chart-container {
+  display: flex;
+  align-items: end;
+  position: relative;
+}
+
+.chart-wrapper {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  flex: 1;
+}
+
+.export-btn {
+  position: absolute;
+  top: 0;
+  left: 38px;
+  z-index: 1;
 }
 
 .export-btn:disabled {

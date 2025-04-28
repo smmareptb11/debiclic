@@ -7,7 +7,7 @@ const HUBEAU_API_URL = import.meta.env.HUBEAU_API_URL || 'https://hubeau.eaufran
 export async function fetchStations(codeStations) {
 	const params = new URLSearchParams({
 		code_station: codeStations,
-		fields: ['code_station','libelle_station','latitude_station','longitude_station','en_service','commentaire_station'],
+		fields: ['code_station','libelle_station','latitude_station','longitude_station','en_service'],
 		format: 'json'
 	})
 

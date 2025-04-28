@@ -16,10 +16,6 @@
   padding-bottom: 0.5rem;
 }
 
-.station-chart {
-  margin-top: 0.75rem;
-}
-
 .station-details {
   display: flex;
   flex-direction: column;
@@ -31,10 +27,4 @@
   justify-content: center;
   align-items: center;
   height: 300px;
-}
-
-.period-displayed {
-  text-align: center;
-  font-size: 0.85rem;
-  color: #777;
 }
