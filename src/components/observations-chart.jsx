@@ -8,6 +8,11 @@ import './observations-chart.css'
 import { HYDRO_META } from '../lib/observations'
 import { formaterNombreFr } from '../util/number'
 
+const DEFAULT_ZOOMED_WIDTH = 340
+const DEFAULT_ZOOMED_HEIGHT = 300
+const RANGER_OFFSET = 100
+const DEFAULT_RANGER_HEIGHT = 20
+
 const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, onExportPNG, setVisibleDates }) => {
 	const zoomRef = useRef(null)
 	const uZoomedRef = useRef()
@@ -40,8 +45,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		}
 
 		const options = {
-			width: 340,
-			height: 200,
+			width: zoomRef.current?.offsetWidth || DEFAULT_ZOOMED_WIDTH,
+			height: DEFAULT_ZOOMED_HEIGHT,
 			scales: {
 				x: { time: true, min: initMin, max: initMax },
 				y: { auto: true }
@@ -50,6 +55,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 				{
 					stroke: '#666',
 					grid: { show: false },
+					space: 70,
 					values: (u, vals) => vals.map(v => shortDateTimeFormatter(v))
 				},
 				{
@@ -69,7 +75,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 					value: (u, v) => (v != null && !isNaN(v)) ? `${formaterNombreFr(v)} ${meta.unit}` : '-'
 				}
 			],
-			cursor: { drag: { setScale: false, setSelect: false }, bind: { dblclick: () => null }},
+			cursor: { drag: { setScale: false, setSelect: false }, bind: { dblclick: () => null } },
 			select: { show: false },
 			legend: { show: true }
 		}
@@ -78,8 +84,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 
 		// Ranger chart
 		const rangerOpts = {
-			width: options.width - 100,
-			height: 20,
+			width: (zoomRef.current?.offsetWidth || DEFAULT_ZOOMED_WIDTH) - RANGER_OFFSET,
+			height: DEFAULT_RANGER_HEIGHT,
 			axes: [
 				{ show: false },
 				{ show: false }
@@ -177,10 +183,28 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		const right = uRangerRef.current.valToPos(initMax, 'x')
 		uRangerRef.current.setSelect({ left, width: right - left, height: uRangerRef.current.bbox.height }, false)
 
+		// Gestionnaire de redimensionnement
+		const handleResize = () => {
+			if (!zoomRef.current || !data) return
+
+			const width = zoomRef.current.offsetWidth || DEFAULT_ZOOMED_WIDTH
+
+			if (uZoomedRef.current) {
+				uZoomedRef.current.setSize({ width, height: DEFAULT_ZOOMED_HEIGHT })
+			}
+
+			if (uRangerRef.current) {
+				uRangerRef.current.setSize({ width: width - RANGER_OFFSET, height: DEFAULT_RANGER_HEIGHT })
+			}
+		}
+
+		window.addEventListener('resize', handleResize)
+
 		// Cleanup on unmount
 		return () => {
 			uZoomedRef.current?.destroy()
 			uRangerRef.current?.destroy()
+			window.removeEventListener('resize', handleResize)
 		}
 	}, [data, grandeurHydro, color, days])
 

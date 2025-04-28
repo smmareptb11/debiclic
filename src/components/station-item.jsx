@@ -84,7 +84,9 @@ function StationItem({ station, onClick }) {
 
 			<div className="station-details">
 				{isLoading ? (
-					<Loader />
+					<div className="loader-container">
+						<Loader />
+					</div>
 				) : (
 					error ? (
 						<Tag type="error">
