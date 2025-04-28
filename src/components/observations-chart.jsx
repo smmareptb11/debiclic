@@ -82,33 +82,18 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 			hooks: {
 				init: [
 				  u => {
-					const tooltip = document.createElement("div")
-					tooltip.id = "tooltip"
-					document.body.appendChild(tooltip)
+						const tooltip = document.createElement('div')
+						tooltip.id = 'tooltip'
+						document.body.appendChild(tooltip)
 			  
-					let bLeft = 0
-					let bTop = 0
+						u.over.addEventListener('mouseenter', () => {
+							tooltip.style.display = 'block'
+						})
+						u.over.addEventListener('mouseleave', () => {
+							tooltip.style.display = 'none'
+						})
 			  
-					function syncBounds() {
-					  if (zoomRef.current) {
-						const bbox = zoomRef.current.getBoundingClientRect()
-						bLeft = bbox.left
-						bTop = bbox.top
-					  }
-					}
-			  
-					syncBounds()
-					window.addEventListener('resize', syncBounds)
-			  
-					u.over.addEventListener('mouseenter', () => {
-					  tooltip.style.display = "block"
-					})
-					u.over.addEventListener('mouseleave', () => {
-					  tooltip.style.display = "none"
-					})
-			  
-					u.over._tooltip = tooltip
-					u.over._syncBounds = syncBounds
+						u.over._tooltip = tooltip
 				  }
 				],
 				setCursor: [
@@ -117,19 +102,19 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 					  const { left, top, idx } = u.cursor
 				  
 					  if (idx == null || idx < 0 || idx >= u.data[0].length) {
-						tooltip.style.display = "none"
-						return
+							tooltip.style.display = 'none'
+							return
 					  }
 				  
 					  const xVal = u.data[0][idx]
 					  const yVal = u.data[1][idx]
 				  
 					  if (xVal == null || yVal == null) {
-						tooltip.style.display = "none"
-						return
+							tooltip.style.display = 'none'
+							return
 					  }
 				  
-					  tooltip.style.display = "block"
+					  tooltip.style.display = 'block'
 					  tooltip.innerHTML = `
 					    <div class="date">${fullDateTimeFormatter(new Date(xVal))}</div>
 					    <div class="value">${meta.label} : ${formaterNombreFr(yVal)} ${meta.unit}</div>
@@ -143,15 +128,17 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 					  let pageY = top + bbox.top
 				  
 					  if (pageX + tooltipWidth + 10 > window.innerWidth) {
-						pageX = pageX - tooltipWidth - 10
-					  } else {
-						pageX = pageX + 10
+							pageX = pageX - tooltipWidth - 10
+					  }
+						else {
+							pageX = pageX + 10
 					  }
 				  
 					  if (pageY + tooltipHeight + 10 > window.innerHeight) {
-						pageY = pageY - tooltipHeight - 10
-					  } else {
-						pageY = pageY + 10
+							pageY = pageY - tooltipHeight - 10
+					  }
+						else {
+							pageY = pageY + 10
 					  }
 				  
 					  tooltip.style.left = `${pageX}px`
@@ -160,10 +147,10 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 				  ],
 				destroy: [
 				  u => {
-					const tooltip = u.over._tooltip
-					const syncBounds = u.over._syncBounds
-					if (tooltip?.parentNode) tooltip.parentNode.removeChild(tooltip)
-					window.removeEventListener('resize', syncBounds)
+						const tooltip = u.over._tooltip
+						const syncBounds = u.over._syncBounds
+						if (tooltip?.parentNode) tooltip.parentNode.removeChild(tooltip)
+						window.removeEventListener('resize', syncBounds)
 				  }
 				]
 			  }
@@ -211,33 +198,33 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 						let x0, lft0, wid0
 
 						function update(newLft, newWid) {
-							const newRgt = newLft + newWid;
-							const maxRgt = uRanger.bbox.width;
-							const minWidth = 10; // Minimum allowed width in pixels
+							const newRgt = newLft + newWid
+							const maxRgt = uRanger.bbox.width
+							const minWidth = 10 // Minimum allowed width in pixels
 
 							if (newLft >= 0 && newRgt <= maxRgt && newWid >= minWidth) {
-								uRanger.setSelect({ left: newLft, width: newWid, height: uRanger.bbox.height }, false);
+								uRanger.setSelect({ left: newLft, width: newWid, height: uRanger.bbox.height }, false)
 
-								const min = uRanger.posToVal(newLft, 'x');
-								const max = uRanger.posToVal(newLft + newWid, 'x');
+								const min = uRanger.posToVal(newLft, 'x')
+								const max = uRanger.posToVal(newLft + newWid, 'x')
 
-								uZoomedRef.current.setScale('x', { min, max });
-								setVisibleDates({ startDate: new Date(min), endDate: new Date(max) });
+								uZoomedRef.current.setScale('x', { min, max })
+								setVisibleDates({ startDate: new Date(min), endDate: new Date(max) })
 							}
 						}
 
 						function bindMove(e, onMove) {
-							x0 = e.clientX;
-							lft0 = uRanger.select.left;
-							wid0 = uRanger.select.width;
-							const _onMove = debounce(evt => onMove(evt.clientX - x0));
+							x0 = e.clientX
+							lft0 = uRanger.select.left
+							wid0 = uRanger.select.width
+							const _onMove = debounce(evt => onMove(evt.clientX - x0))
 							const _onUp = () => {
-								off('mousemove', document, _onMove);
-								off('mouseup', document, _onUp);
-							};
-							on('mousemove', document, _onMove);
-							on('mouseup', document, _onUp);
-							e.stopPropagation();
+								off('mousemove', document, _onMove)
+								off('mouseup', document, _onUp)
+							}
+							on('mousemove', document, _onMove)
+							on('mouseup', document, _onUp)
+							e.stopPropagation()
 						}
 
 						const selector = uRanger.root.querySelector('.u-select')
