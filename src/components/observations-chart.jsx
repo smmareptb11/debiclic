@@ -69,6 +69,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 					value: (u, v) => (v != null && !isNaN(v)) ? `${formaterNombreFr(v)} ${meta.unit}` : '-'
 				}
 			],
+			cursor: { drag: { setScale: false, setSelect: false }, bind: { dblclick: () => null }},
+			select: { show: false },
 			legend: { show: true }
 		}
 
