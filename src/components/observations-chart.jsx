@@ -7,6 +7,7 @@ import Tag from './tag'
 import './observations-chart.css'
 import { HYDRO_META } from '../lib/observations'
 import { formaterNombreFr } from '../util/number'
+import { Camera } from 'lucide-react'
 
 const DEFAULT_ZOOMED_WIDTH = 340
 const DEFAULT_ZOOMED_HEIGHT = 300
@@ -319,7 +320,6 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 
 	return (
 		<div className="chart-container">
-
 			<button
 				disabled={data.length === 0}
 				type="button"
@@ -327,7 +327,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 				className="export-btn"
 				onClick={exportPNG}
 			>
-				📷
+				<Camera />
 			</button>
 			<div className="chart-wrapper">
 				{ <div ref={rangerRef} className="chart-ranger" /> }

@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "leaflet": "^1.9.4",
+    "lucide-react": "^0.503.0",
     "preact": "^10.26.2",
     "uplot": "^1.6.31"
   },
