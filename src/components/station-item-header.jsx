@@ -8,7 +8,9 @@ function StationItemHeader({ station, selected, grandeurHydro, onClick }) {
 	const { label, unit, coef } = HYDRO_META[grandeurHydro]
 
 	const handleClick = useCallback(() => {
-		onClick(station.codeStation)
+		if (onClick) {
+			onClick(station.codeStation)
+		}
 	}, [onClick, station.codeStation])
 
 	return (
@@ -18,8 +20,8 @@ function StationItemHeader({ station, selected, grandeurHydro, onClick }) {
 					<div className="station-name">{station.customLabel || station.name}</div>
 				</div>
 
-				{selected && (
-					onClick && <button className="close-button" onClick={handleClick}>X</button>
+				{selected && onClick && (
+					<button className="close-button" onClick={handleClick}>X</button>
 				)}
 			</div>
 

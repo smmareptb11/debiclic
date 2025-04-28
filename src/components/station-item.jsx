@@ -18,10 +18,6 @@ function StationItem({ station, onClick }) {
 	const [visibleDates, setVisibleDates] = useState({ startDate, endDate })
 	const [error, setError] = useState(false)
 	
-	const handleClose = useCallback(() => {
-		onClick(null)
-	}, [onClick])
-
 	const data = useMemo(() => {
 		if (!observations?.data || error) {
 			return null
@@ -82,7 +78,7 @@ function StationItem({ station, onClick }) {
 					selected
 					station={station}
 					grandeurHydro={grandeurHydro}
-					onClick={handleClose}
+					onClick={onClick}
 				/>
 			</div>
 

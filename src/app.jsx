@@ -116,7 +116,7 @@ const App = ({
 							<div className="station-details-view">
 								<StationItem
 									station={stations.find(({ codeStation }) => codeStation === selectedStationCode)}
-									onClick={handleClickStation}
+									onClick={stations.length > 1 ? handleClickStation : null}
 								/>
 							</div>
 						) : (
