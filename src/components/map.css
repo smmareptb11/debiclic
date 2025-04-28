@@ -1,4 +1,16 @@
 #mapid {
     flex: 1;
   }
-  
+
+.documentation-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.documentation-link img {
+  height: 35px;
+  vertical-align: middle;
+}

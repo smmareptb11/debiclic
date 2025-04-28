@@ -20,9 +20,8 @@ function createInfoControl() {
 		div.style.borderRadius = '4px'
 		div.style.margin = '10px'
 		// Set the inner HTML with a link to the documentation
-		div.innerHTML = `<a href="${DEBICLIC_DOC_URL}" target="_blank" style="text-decoration: none; color: inherit;">` +
-      `<img src="${debiclicLogo}" alt="Debiclic Logo" style="height:20px; vertical-align:middle; margin-right:5px;" />` +
-      'Documentation</a>'
+		div.innerHTML = `<a href="${DEBICLIC_DOC_URL}" target="_blank" class="documentation-link">` +
+      `<img src="${debiclicLogo}" alt="Debiclic Logo"/></a>`
 		return div
 	}
 	return infoControl
