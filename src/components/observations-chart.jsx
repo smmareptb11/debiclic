@@ -210,42 +210,45 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 						let x0, lft0, wid0
 
 						function update(newLft, newWid) {
-							const newRgt = newLft + newWid
-							const maxRgt = uRanger.bbox.width
-							if (newLft >= 0 && newRgt <= maxRgt) {
-								uRanger.setSelect({ left: newLft, width: newWid, height: uRanger.bbox.height }, false)
-								// update zoomed chart
-								const min = uRanger.posToVal(newLft, 'x')
-								const max = uRanger.posToVal(newLft + newWid, 'x')
-								uZoomedRef.current.setScale('x', { min, max })
-								setVisibleDates({ startDate: new Date(min), endDate: new Date(max) })
+							const newRgt = newLft + newWid;
+							const maxRgt = uRanger.bbox.width;
+							const minWidth = 10; // Minimum allowed width in pixels
+
+							if (newLft >= 0 && newRgt <= maxRgt && newWid >= minWidth) {
+								uRanger.setSelect({ left: newLft, width: newWid, height: uRanger.bbox.height }, false);
+
+								const min = uRanger.posToVal(newLft, 'x');
+								const max = uRanger.posToVal(newLft + newWid, 'x');
+
+								uZoomedRef.current.setScale('x', { min, max });
+								setVisibleDates({ startDate: new Date(min), endDate: new Date(max) });
 							}
 						}
 
 						function bindMove(e, onMove) {
-							x0 = e.clientX
-							lft0 = uRanger.select.left
-							wid0 = uRanger.select.width
-							const _onMove = debounce(evt => onMove(evt.clientX - x0))
-							on('mousemove', document, _onMove)
+							x0 = e.clientX;
+							lft0 = uRanger.select.left;
+							wid0 = uRanger.select.width;
+							const _onMove = debounce(evt => onMove(evt.clientX - x0));
 							const _onUp = () => {
-								off('mousemove', document, _onMove)
-								off('mouseup', document, _onUp)
-							}
-							on('mouseup', document, _onUp)
-							e.stopPropagation()
+								off('mousemove', document, _onMove);
+								off('mouseup', document, _onUp);
+							};
+							on('mousemove', document, _onMove);
+							on('mouseup', document, _onUp);
+							e.stopPropagation();
 						}
 
 						const selector = uRanger.root.querySelector('.u-select')
-						// create grips for visual only
+
 						placeDiv('u-grip-l')
 						placeDiv('u-grip-r')
 						// bind pan only (fixed width)
 						on('mousedown', selector, e => bindMove(e, diff => update(lft0 + diff, wid0)))
 						const gripL = selector.querySelector('.u-grip-l')
 						const gripR = selector.querySelector('.u-grip-r')
-						on('mousedown', gripL, e => bindMove(e, diff => update(lft0 + diff, wid0)))
-						on('mousedown', gripR, e => bindMove(e, diff => update(lft0 + diff, wid0)))
+						on('mousedown', gripL, e => bindMove(e, diff => update(lft0 + diff, wid0 - diff)))
+						on('mousedown', gripR, e => bindMove(e, diff => update(lft0, wid0 + diff)))
 					}
 				],
 				setSelect: [
