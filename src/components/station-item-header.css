@@ -25,11 +25,6 @@
 	font-size: 1rem;
   }
   
-  .station-code {
-	font-size: 0.85rem;
-	color: #666;
-  }
-
   .station-tags {
 	display: flex;
 	gap: 0.5rem;
