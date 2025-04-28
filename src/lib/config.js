@@ -46,8 +46,8 @@ export function validateConfig(config) {
 	}
 
 	// Tri
-	if (config.sort && !['asc', 'desc'].includes(config.sort)) {
-		errors.push('"sort" doit être "asc", "desc".')
+	if (config.sort && !['asc', 'desc', 'default'].includes(config.sort)) {
+		errors.push('"sort" doit être "asc", "desc" ou "default".')
 	}
 
 	// Carte affichée
@@ -64,8 +64,8 @@ export function validateConfig(config) {
 	}
 
 	// Container
-	if (config.container && typeof config.container !== 'string' && !(config.container instanceof HTMLElement)) {
-		errors.push('"container" doit être un sélecteur CSS (string) ou un élément HTML.')
+	if (config.container && typeof config.container !== 'string') {
+		errors.push('"container" doit être un sélecteur CSS (string).')
 	}
 
 	return {
