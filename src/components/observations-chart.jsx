@@ -11,7 +11,7 @@ import { formaterNombreFr } from '../util/number'
 const DEFAULT_ZOOMED_WIDTH = 340
 const DEFAULT_ZOOMED_HEIGHT = 300
 const RANGER_OFFSET = 100
-const DEFAULT_RANGER_HEIGHT = 20
+const DEFAULT_RANGER_HEIGHT = 28
 
 const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, onExportPNG, setVisibleDates }) => {
 	const zoomRef = useRef(null)
@@ -318,11 +318,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 	}
 
 	return (
-		<div className="chart-wrapper">
-			<div className="chart-container">
-				{ <div ref={rangerRef} className="chart-ranger" /> }
-				<div ref={zoomRef} />
-			</div>
+		<div className="chart-container">
 
 			<button
 				disabled={data.length === 0}
@@ -331,8 +327,12 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 				className="export-btn"
 				onClick={exportPNG}
 			>
-				Exporter en PNG
+				📷
 			</button>
+			<div className="chart-wrapper">
+				{ <div ref={rangerRef} className="chart-ranger" /> }
+				<div ref={zoomRef} />
+			</div>
 		</div>
 	)
 }
