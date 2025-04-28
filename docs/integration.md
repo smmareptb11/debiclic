@@ -76,7 +76,7 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
 | `colors`          | `Record<string, string>`                           | Couleurs : `station`, `graph`                                                                                        | `{station: '#007BFF', graph: '#007BFF'}` |
 | `grandeurHydro`   | `'QmnJ'` \|`'Q'` \| `'H'`                          | Type de mesure à afficher (`QmnJ` pour débit moyen journalier, `Q` pour débit, `H` pour hauteur)                     | `'Q'`             |
 | `days`            | `number` (1–30)                                    | Nombre de jours à visible dans le graphique                                                                          | `30`              |
-| `sort`            | `'asc'` \| `'desc'` \| `'defautlt'` *(optionnel)*  | Ordre de tri des stations dans la liste                                                                              | `'default'`       |
+| `sort`            | `'asc'` \| `'desc'` \| `'default'` *(optionnel)*  | Ordre de tri des stations dans la liste                                                                              | `'default'`       |
 | `showMap`         | `boolean`                                          | Affiche ou masque la carte                                                                                           | `true`            |
 | `src`             | `string` *(optionnel)*                             | URL personnalisée vers `index.html` si besoin                                                                        | automatique       |
 
