@@ -89,6 +89,7 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
 - 📄 [Exemple configurable](../examples/custom-config.html)
 - 📄 [Exemple sans carte](../examples/no-map.html)
 - 📄 [Exemple avec plusieurs stations](../examples/stations.html)
+- 📄 [Exemple de chargement dynamique](../examples/dynamic-loading.html)
 
 ---
 
