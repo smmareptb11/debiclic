@@ -55,6 +55,13 @@ export function validateConfig(config) {
 		errors.push('"showMap" doit être un booléen.')
 	}
 
+	// Vérification de mapWidth
+	if (config.mapWidth !== undefined) {
+		if (typeof config.mapWidth !== 'string' || !/^\d+(?:\.\d+)?(?:px|%)$/.test(config.mapWidth)) {
+			errors.push('"mapWidth" doit être une chaîne se terminant par "%" ou "px", par exemple "50%" ou "200px".')
+		}
+	}
+
 	// Dimensions
 	if (config.width && typeof config.width !== 'string' && typeof config.width !== 'number') {
 		errors.push('"width" doit être une chaîne ou un nombre.')

@@ -229,6 +229,10 @@
           <option value="false">Non</option>
         </select>
       </label>
+      <label id="map-width-section">
+        Largeur de la carte (%, px)
+        <input type="text" name="mapWidth" value="50%" />
+      </label>
     </div>
 
     <div class="button-group">
@@ -239,6 +243,17 @@
 
   <div id="debiclic-widget"></div>
   </div>
+
+  <!-- Toggle map width field based on showMap value -->
+  <script>
+    const showMapSelect = document.querySelector('select[name="showMap"]');
+    const mapWidthSection = document.getElementById('map-width-section');
+    function toggleMapWidthField() {
+      mapWidthSection.style.display = showMapSelect.value === 'true' ? 'flex' : 'none';
+    }
+    showMapSelect.addEventListener('change', toggleMapWidthField);
+    window.addEventListener('DOMContentLoaded', toggleMapWidthField);
+  </script>
 
   <script>
     const form = document.getElementById('config-form');
@@ -278,7 +293,8 @@
         sort: data.get('sort'),
         width: data.get('width'),
         height: data.get('height'),
-        showMap: data.get('showMap') === 'true'
+        showMap: data.get('showMap') === 'true',
+        mapWidth: data.get('mapWidth')
       };
     }
 

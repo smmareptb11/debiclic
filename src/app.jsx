@@ -10,6 +10,7 @@ import Tag from './components/tag'
 import { sortStations } from './lib/stations'
 
 const App = ({
+	mapWidth = '50%',
 	showMap = true,
 	codeStations = [],
 	stationsLabels = {},
@@ -86,18 +87,20 @@ const App = ({
 			grandeurHydro={grandeurHydro}
 			colors={colors}
 		>
-			<div className="app">
+			<div className="app" style={{ display: 'flex' }}>
 				{showMap && (
-					<Map
-						stations={stations}
-						hoveredStationCode={hoveredStationCode}
-						selectedStationCode={selectedStationCode}
-						onHoverStation={setHoveredStationCode}
-						onSelectStation={handleClickStation}
-					/>
+					<div className='map-container' style={{ flex: `0 0 ${mapWidth}` }}>
+						<Map
+							stations={stations}
+							hoveredStationCode={hoveredStationCode}
+							selectedStationCode={selectedStationCode}
+							onHoverStation={setHoveredStationCode}
+							onSelectStation={handleClickStation}
+						/>
+					</div>
 				)}
 
-				<div class="side-menu" style={!showMap ? { width: '100%' } : {}}>
+				<div class="side-menu" style={!showMap ? { width: '100%' } : { flex: 1 }}>
 					{isLoading && <Loader />}
 
 					{error ? (
