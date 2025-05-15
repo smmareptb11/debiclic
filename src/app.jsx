@@ -87,7 +87,7 @@ const App = ({
 			grandeurHydro={grandeurHydro}
 			colors={colors}
 		>
-			<div className="app" style={{ display: 'flex' }}>
+			<div className="app">
 				{showMap && (
 					<div className='map-container' style={{ flex: `0 0 ${mapWidth}` }}>
 						<Map
