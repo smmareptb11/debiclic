@@ -7,35 +7,37 @@
   <body>
     <h1>Débi'Clic – Exemple multi-instance</h1>
 
-    <div id="station-seine" style="margin-bottom: 2rem;"></div>
-    <div id="station-loire"></div>
+    <div id="station-moussoulens" style="margin-bottom: 2rem;"></div>
+    <div id="station-pontrouge"></div>
 
     <script src="https://unpkg.com/debiclic@latest/dist/embed/debiclic.min.js"></script>
     <script>
       debiclic.init({
-        container: "#station-seine",
-        codeStations: ["F001000101"],
+        container: "#station-moussoulens",
+        codeStations: ["Y161202001"],
         stationsLabels: {
-          F001000101: "Station de la Seine"
+          Y161202001: "Seuil de Moussoulens"
         },
         colors: {
           station: "#1E90FF",
           graph: "#1E90FF"
         },
+		height: '500',
         grandeurHydro: "QmnJ",
         days: 10
       });
 
       debiclic.init({
-        container: "#station-loire",
-        codeStations: ["F002000101"],
+        container: "#station-pontrouge",
+        codeStations: ["Y136401001"],
         stationsLabels: {
-          F002000101: "Station de la Loire"
+          Y136401001: "Pont rouge"
         },
         colors: {
           station: "#32CD32",
           graph: "#32CD32"
         },
+		height: '500',
         grandeurHydro: "H",
         days: 30
       });
