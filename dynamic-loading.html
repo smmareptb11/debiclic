@@ -1,0 +1,39 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Débi'Clic - Chargement dynamique</title>
+</head>
+<body>
+  <button id="load-widget-btn">Charger le widget Débi'Clic</button>
+  <div id="debiclic-widget" style="display:none;"></div>
+
+  <script>
+    document.getElementById('load-widget-btn').addEventListener('click', function() {
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = 'Chargement...';
+
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/debiclic@latest/dist/embed/debiclic.min.js';
+      script.onload = function() {
+        document.getElementById('debiclic-widget').style.display = 'block';
+        debiclic.init({
+          container: '#debiclic-widget',
+          codeStations: ['Y161202001']
+        });
+        btn.style.display = 'none';
+      };
+
+      script.onerror = function() {
+        btn.disabled = false;
+        btn.textContent = "Charger le widget Débi'Clic";
+        alert("Erreur lors du chargement du script Débi'Clic.");
+      };
+      document.body.appendChild(script);
+    });
+  </script>
+</body>
+</html>
