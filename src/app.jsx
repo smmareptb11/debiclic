@@ -89,7 +89,7 @@ const App = ({
 		>
 			<div className="app">
 				{showMap && (
-					<div className='map-container' style={{ flex: `0 0 ${mapWidth}` }}>
+					<div className="map-container" style={{ '--map-width': mapWidth }}>
 						<Map
 							stations={stations}
 							hoveredStationCode={hoveredStationCode}

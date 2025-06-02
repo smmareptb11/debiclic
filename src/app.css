@@ -9,6 +9,12 @@
   display: flex;
 }
 
+@media (min-width: 769px) {
+  .map-container {
+    flex: 0 0 var(--map-width);
+  }
+}
+
 .side-menu {
   width: 500px;
   border-left: 1px solid #ccc;
