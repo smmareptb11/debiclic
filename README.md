@@ -100,5 +100,5 @@ yarn lint:fix
 ```
 
 ---
-
-![SMMAR](./assets/smmar-logo.png)
+## Ce projet a été financé dans le cadre du PAPI 3 par l'État, le Conseil Départemental de l'Aude et le SMMAR EPTB AUDE
+ <img src="./assets/1_PREFET_AUDE-1.svg" height="150"> <img src="./assets/Flag_of_the_Department_of_Aude.svg.png" height="150"> <img src="./assets/smmar-logo.png" height="120">
