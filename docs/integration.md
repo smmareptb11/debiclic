@@ -85,12 +85,12 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
 
 ## 🧪 Exemples
 
-- 📄 [Exemple basique](../examples/basic.html)
-- 📄 [Exemple multi-instance](../examples/multi-instance.html)
-- 📄 [Exemple configurable](../examples/custom-config.html)
-- 📄 [Exemple sans carte](../examples/no-map.html)
-- 📄 [Exemple avec plusieurs stations](../examples/stations.html)
-- 📄 [Exemple de chargement dynamique](../examples/dynamic-loading.html)
+- 📄 [Exemple basique](https://smmareptb11.github.io/debiclic/basic.html)
+- 📄 [Exemple multi-instance](https://smmareptb11.github.io/debiclic/multi-instance.html)
+- 📄 [Exemple configurateur](https://smmareptb11.github.io/debiclic/custom-config.html)
+- 📄 [Exemple sans carte](https://smmareptb11.github.io/debiclic/no-map.html)
+- 📄 [Exemple avec plusieurs stations](https://smmareptb11.github.io/debiclic/stations.html)
+- 📄 [Exemple de chargement dynamique](https://smmareptb11.github.io/debiclic/dynamic-loading.html)
 
 ---
 
