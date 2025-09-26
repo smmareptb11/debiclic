@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debi'Clic - Exemple avec Seuils</title>
+    <style>
+        body { font-family: sans-serif; }
+        #debiclic-widget { height: 500px; }
+    </style>
+</head>
+<body>
+    <h1>Exemple d'intégration avec seuils</h1>
+    <div id="debiclic-widget"></div>
+
+    <script>
+        debiclic.init({
+            container: "#debiclic-widget",
+            codeStations: ["F001000101", "F002000101"],
+            stationsLabels: {
+                "F001000101": "Ma station 1",
+                "F002000101": "Ma station 2"
+            },
+            colors: {
+                station: "#007BFF",
+                graph: "#007BFF"
+            },
+            grandeurHydro: "QmnJ",
+            days: 15,
+            sort: "desc",
+            showMap: true,
+            threshold: 'low-water',
+            seuils: {
+                "F001000101": [
+                    { label: 'Vigilance', value: 50, color: 'yellow', style: 'dotted', default: true },
+                    { label: 'Alerte', value: 25, color: 'orange', style: 'dashed', default: true },
+                    { label: 'Crise', value: 10, color: 'red', style: 'solid', default: true }
+                ],
+                "F002000101": [
+                    { label: 'Débit de crue', value: 150, color: 'purple', style: 'solid', default: true }
+                ]
+            }
+        });
+    </script>
+
+    <script src="../dist/embed/debiclic.min.js"></script>
+</body>
+</html>

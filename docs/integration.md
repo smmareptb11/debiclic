@@ -79,6 +79,8 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
 | `sort`            | `'asc'` \| `'desc'` \| `'default'` *(optionnel)*  | Ordre de tri des stations dans la liste                                                                               | `'default'`       |
 | `showMap`         | `boolean`                                          | Affiche ou masque la carte                                                                                           | `true`            |
 | `mapWidth`        | `string` *(optionnel)*                             | Largeur de la carte en pourcentage ou pixels                                                                         | `50%`             |
+| `threshold`       | `'none'` \| `'low-water'` \| `'flood'` *(optionnel)* | Mode de coloration dynamique des stations basé sur les seuils                                                        | `'none'`          |
+| `seuils`          | `Record<string, ThresholdDef[]>` *(optionnel)*     | Définition des seuils par station (lignes dans le graphique + logique de couleur carte)                              | `{}`              |
 | `src`             | `string` *(optionnel)*                             | URL personnalisée vers `index.html` si besoin                                                                        | automatique       |
 
 ---
@@ -91,6 +93,7 @@ Appelez `debiclic.init()` avec vos paramètres personnalisés :
 - 📄 [Exemple sans carte](https://smmareptb11.github.io/debiclic/no-map.html)
 - 📄 [Exemple avec plusieurs stations](https://smmareptb11.github.io/debiclic/stations.html)
 - 📄 [Exemple de chargement dynamique](https://smmareptb11.github.io/debiclic/dynamic-loading.html)
+- 📄 [Exemple avec seuils](https://smmareptb11.github.io/debiclic/thresholds.html)
 
 ---
 

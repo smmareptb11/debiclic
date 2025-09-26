@@ -52,7 +52,15 @@ Permettre aux collectivités, acteurs publics ou tout autre site tiers d’inté
     grandeurHydro: "QmnJ",
     days: 15,
     sort: "desc",
-    showMap: true
+    showMap: true,
+    threshold: 'low-water', // 'none', 'low-water', ou 'flood'
+    seuils: {
+      "F001000101": [
+        { label: 'Vigilance', value: 50, color: 'yellow' },
+        { label: 'Alerte', value: 25, color: 'orange' },
+        { label: 'Crise', value: 10, color: 'red' }
+      ]
+    }
   });
 </script>
 ```
@@ -73,6 +81,33 @@ Ce script injecte dynamiquement une iframe contenant l'application Débi'Clic, p
 - 🧪 [Exemples de configuration](./examples)
 - 🧱 [Structure du code source](./src)
 - 📚 [Licence AGPL-3.0](./LICENSE)
+
+### 🔀 Modes de coloration par seuil (`threshold`)
+
+Le paramètre global `threshold` contrôle la coloration des stations en fonction des seuils définis pour chaque station :
+
+| Mode | Comportement | Exemple visuel |
+|------|--------------|----------------|
+| `none` | Aucune influence des seuils : toutes les stations utilisent `colors.station`. | Couleur uniforme. |
+| `flood` | Couleur = couleur du dernier seuil dépassé (plus grand seuil dont la valeur est ≤ observation). Si l'observation est inférieure au premier seuil, couleur par défaut. | Progression de couleur avec la montée de la valeur. |
+| `low-water` | Couleur = couleur du premier seuil au-dessus de la valeur mesurée (plus petit seuil strictement > observation). Si la valeur est au-dessus du plus haut seuil, couleur par défaut. | Met en évidence la proximité d'un seuil bas. |
+
+Pour activer la logique, définissez également des `seuils` :
+
+```js
+seuils: {
+  "F001000101": [
+  { label: 'Vigilance', value: 50, color: 'yellow', style: 'dotted', default: true },
+  { label: 'Alerte', value: 25, color: 'orange', style: 'dashed', default: true },
+  { label: 'Crise', value: 10, color: 'red', style: 'solid', default: true }
+  ]
+}
+```
+
+Dans le graphique :
+* Chaque seuil apparaît sous forme de ligne (solid, dotted, dashed).
+* La légende affiche `NomSeuil (valeur unité)` ; un clic masque/affiche la ligne (l'élément devient semi-transparent lorsqu'inactif).
+* Le champ `default` contrôle l'affichage initial.
 
 ---
 
