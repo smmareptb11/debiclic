@@ -120,7 +120,64 @@ describe('validateConfig', () => {
 			container: 42
 		}
 		const { valid, errors } = validateConfig(config)
-		expect(valid).toBe(false)
-		expect(errors).toContain('"container" doit être un sélecteur CSS (string).')
-	})
+        expect(valid).toBe(false)
+        expect(errors).toContain('"container" doit être un sélecteur CSS (string).')
+    })
+
+    it('valide une configuration avec des seuils corrects', () => {
+        const config = {
+            codeStations: ['X001'],
+            seuils: {
+                X001: [
+					{ label: 'Bas', value: 10, color: 'blue', style: 'solid', default: true },
+					{ label: 'Haut', value: 20, color: 'red', style: 'dotted', default: false }
+                ]
+            }
+        }
+        const { valid, errors } = validateConfig(config)
+        expect(valid).toBe(true)
+        expect(errors).toHaveLength(0)
+    })
+
+    it('rejette si seuils contient une clé de station inconnue', () => {
+        const config = {
+            codeStations: ['X001'],
+            seuils: { BAD: [] }
+        }
+        const { valid, errors } = validateConfig(config)
+        expect(valid).toBe(false)
+        expect(errors[0]).toMatch(/seuils.*clé de station inconnue/i)
+    })
+
+    it('rejette si un seuil a un format invalide', () => {
+        const config = {
+            codeStations: ['X001'],
+            seuils: {
+                X001: [{ label: 'Bas' }]
+            }
+        }
+        const { valid, errors } = validateConfig(config)
+        expect(valid).toBe(false)
+        expect(errors).toContain("Le seuil à l'index 0 pour la station X001 doit avoir une \"value\" (nombre).")
+    })
+
+    it('valide une configuration avec un threshold correct', () => {
+        const config = {
+            codeStations: ['X001'],
+            threshold: 'low-water'
+        }
+        const { valid, errors } = validateConfig(config)
+        expect(valid).toBe(true)
+        expect(errors).toHaveLength(0)
+    })
+
+    it('rejette si threshold est invalide', () => {
+        const config = {
+            codeStations: ['X001'],
+            threshold: 'invalid'
+        }
+        const { valid, errors } = validateConfig(config)
+        expect(valid).toBe(false)
+        expect(errors).toContain('"threshold" doit être "none", "low-water" ou "flood".')
+    })
 })

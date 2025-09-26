@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'preact/hooks'
+import { useEffect, useRef, useCallback, useState } from 'preact/hooks'
 import UPlot from 'uplot'
 import 'uplot/dist/uPlot.min.css'
 import { fullDateTimeFormatter, shortDateTimeFormatter } from '../util/date'
@@ -14,7 +14,7 @@ const DEFAULT_ZOOMED_HEIGHT = 300
 const RANGER_OFFSET = 100
 const DEFAULT_RANGER_HEIGHT = 28
 
-const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, onExportPNG, setVisibleDates }) => {
+const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, onExportPNG, setVisibleDates, seuils }) => {
 	const zoomRef = useRef(null)
 	const uZoomedRef = useRef()
 	const rangerRef = useRef(null)
@@ -30,7 +30,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		zipped.sort((a, b) => a[0] - b[0])
 		const xVals = zipped.map(d => d[0])
 		const yVals = zipped.map(d => d[1])
-		const transformedData = [xVals, yVals]
+		const seuilsData = (seuils || []).map(seuil => Array(xVals.length).fill(seuil.value * (meta.coef || 1)));
+		const transformedData = [xVals, yVals, ...seuilsData]
 
 		// Domaine de la vue principale sur les derniers N jours
 		const daysClamped = Math.max(1, days)
@@ -44,6 +45,16 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 			uZoomedRef.current.destroy()
 			uZoomedRef.current = null
 		}
+
+		const seuilsSeries = (seuils || []).map(seuil => ({
+			label: seuil.label,
+			stroke: seuil.color,
+			width: 2,
+			dash: seuil.style === 'dotted' ? [4, 4] : (seuil.style === 'dashed' ? [15, 5] : null),
+			value: (u, v) => `${seuil.label} (${formaterNombreFr(seuil.value * (meta.coef || 1))} ${meta.unit})`,
+			points: { show: false },
+			show: seuil.default
+		}));
 
 		const options = {
 			width: zoomRef.current?.offsetWidth || DEFAULT_ZOOMED_WIDTH,
@@ -74,7 +85,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 					spanGaps: false,
 					width: 2,
 					value: (u, v) => (v != null && !isNaN(v)) ? `${formaterNombreFr(v)} ${meta.unit}` : '-'
-				}
+				},
+				...seuilsSeries
 			],
 			cursor: { drag: { setScale: false, setSelect: false }, bind: { dblclick: () => null } },
 			select: { show: false },
@@ -157,6 +169,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		}
 
 		uZoomedRef.current = new UPlot(options, transformedData, zoomRef.current)
+		// Initialiser l'état de visibilité une fois le graphique créé
+		refreshSeriesVisibility()
 
 		// Ranger chart
 		const rangerOpts = {
@@ -256,6 +270,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		else {
 			uRangerRef.current.setData(transformedData)
 		}
+		// Rafraîchir (au cas où la configuration des seuils aurait changé)
+		refreshSeriesVisibility()
 		const left = uRangerRef.current.valToPos(initMin, 'x')
 		const right = uRangerRef.current.valToPos(initMax, 'x')
 		uRangerRef.current.setSelect({ left, width: right - left, height: uRangerRef.current.bbox.height }, false)
@@ -283,7 +299,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 			uRangerRef.current?.destroy()
 			window.removeEventListener('resize', handleResize)
 		}
-	}, [data, grandeurHydro, color, days])
+	}, [data, grandeurHydro, color, days, seuils])
 
 	const exportPNG = useCallback(() => {
 		const canvas = uZoomedRef.current?.root.querySelector('canvas')
@@ -291,6 +307,32 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 
 		onExportPNG(canvas)
 	}, [onExportPNG])
+
+	// Etat réactif de visibilité des séries (seuils)
+	const [seriesVisibility, setSeriesVisibility] = useState(new Map());
+
+	const refreshSeriesVisibility = useCallback(() => {
+		if (!uZoomedRef.current) return;
+		setSeriesVisibility(new Map(
+			uZoomedRef.current.series
+				.filter(s => s.label)
+				.map(s => [s.label, s.show])
+		));
+	}, []);
+
+	const toggleSeuil = useCallback((seuilLabel) => {
+		if (!uZoomedRef.current) return;
+		const seriesIdx = uZoomedRef.current.series.findIndex(s => s.label === seuilLabel);
+		if (seriesIdx > -1) {
+			uZoomedRef.current.setSeries(seriesIdx, { show: !uZoomedRef.current.series[seriesIdx].show });
+			// Mettre à jour l'état de visibilité après modification
+			setSeriesVisibility(prev => {
+				const next = new Map(prev);
+				next.set(seuilLabel, !prev.get(seuilLabel));
+				return next;
+			});
+		}
+	}, []);
 
 	// Affichage conditionnel en fonction de la disponibilité des données
 	if (!data) {
@@ -306,20 +348,68 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 	}
 
 	return (
-		<div className="chart-container">
-			<button
-				disabled={data.length === 0}
-				type="button"
-				title="Exporter le graphique au format PNG"
-				className="export-btn"
-				onClick={exportPNG}
-			>
-				<Camera />
-			</button>
-			<div className="chart-wrapper">
-				{ <div ref={rangerRef} className="chart-ranger" /> }
-				<div ref={zoomRef} />
+		<div>
+			<div className="chart-container">
+				<button
+					disabled={data.length === 0}
+					type="button"
+					title="Exporter le graphique au format PNG"
+					className="export-btn sqr-btn"
+					onClick={exportPNG}
+				>
+					<Camera />
+				</button>
+				<div className="chart-wrapper">
+					{ <div ref={rangerRef} className="chart-ranger" /> }
+					<div ref={zoomRef} />
+				</div>
+
 			</div>
+
+				{(seuils && seuils.length > 0) && (
+					<div className="seuils-legend" role="list" aria-label="Seuils">
+						{seuils.map(seuil => {
+						const lineStyle = {
+							display: 'inline-block',
+							width: '25px',
+							marginRight: '8px',
+							verticalAlign: 'middle',
+						};
+
+							const isActive = !!seriesVisibility.get(seuil.label)
+							const baseColor = seuil.color
+
+							let ruleColor = baseColor
+							if (!isActive) {
+								// Couleur atténuée pour la ligne lorsqu'inactive
+								// Conversion simple en ajoutant une transparence via gradient simulé
+								ruleColor = '#bbb'
+							}
+
+							if (seuil.style === 'dotted') {
+								lineStyle.borderBottom = `2px dotted ${ruleColor}`
+							} else if (seuil.style === 'dashed') {
+								lineStyle.borderBottom = `2px dashed ${ruleColor}`
+							} else {
+								lineStyle.borderBottom = `2px solid ${ruleColor}`
+							}
+
+							return (
+								<button
+									key={seuil.label}
+									role="listitem"
+									className={`seuil-legend-item ${isActive ? 'active' : 'inactive'}`}
+									aria-pressed={isActive}
+									onClick={() => toggleSeuil(seuil.label)}
+									title={`${seuil.label} (${formaterNombreFr(seuil.value * (meta.coef || 1))} ${meta.unit})`}
+								>
+									<span aria-hidden="true" style={lineStyle} />
+									<span>{seuil.label} ({formaterNombreFr(seuil.value * (meta.coef || 1))} {meta.unit})</span>
+								</button>
+							)
+					})}
+				</div>
+			)}
 		</div>
 	)
 }

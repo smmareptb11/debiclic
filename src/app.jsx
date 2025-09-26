@@ -8,6 +8,7 @@ import { ConfigProvider } from './contexts/config-context'
 import Loader from './components/loader'
 import Tag from './components/tag'
 import { sortStations } from './lib/stations'
+import { getStationColor } from './util/station-color'
 
 const App = ({
 	mapWidth = '50%',
@@ -19,7 +20,9 @@ const App = ({
 	startDate,
 	endDate,
 	days = 30,
-	sort = 'default'
+	sort = 'default',
+	seuils = {},
+	threshold = 'none'
 }) => {
 	const [stations, setStations] = useState([])
 	const [selectedStationCode, setSelectedStationCode] = useState(null)
@@ -46,6 +49,8 @@ const App = ({
 				const activeStations = stations.filter(station => station.en_service)
 				const stationsData = await Promise.all(activeStations.map(async (station) => {
 					const lastObservation = await fetchLastObservation({ codeStation: station.code_station, grandeurHydro })
+					const stationSeuils = seuils[station.code_station];
+					const color = getStationColor(lastObservation, stationSeuils, threshold, colors.station);
 
 					return {
 						codeStation: station.code_station,
@@ -54,7 +59,8 @@ const App = ({
 						lat: station.latitude_station,
 						lng: station.longitude_station,
 						enService: station.en_service,
-						lastObservation
+						lastObservation,
+						color
 					}
 				}))
 
@@ -86,6 +92,7 @@ const App = ({
 			days={days}
 			grandeurHydro={grandeurHydro}
 			colors={colors}
+			seuils={seuils}
 		>
 			<div className="app">
 				{showMap && (
@@ -113,6 +120,7 @@ const App = ({
 								<StationItem
 									station={stations.find(({ codeStation }) => codeStation === selectedStationCode)}
 									onClick={stations.length > 1 ? handleClickStation : null}
+									seuils={seuils[selectedStationCode]}
 								/>
 							</div>
 						) : (

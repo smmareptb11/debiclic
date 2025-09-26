@@ -112,7 +112,7 @@ const Map = ({ stations, selectedStationCode, hoveredStationCode, onHoverStation
 			stations.forEach(station => {
 				const marker = Leaflet.circleMarker([station.lat, station.lng], {
 					...styles.marker,
-					fillColor: colors.station
+					fillColor: station.color || colors.station
 				}).addTo(map)
 				markersRef.current[station.codeStation] = marker
 

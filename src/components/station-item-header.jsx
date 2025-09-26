@@ -18,11 +18,11 @@ function StationItemHeader({ station, selected, grandeurHydro, onClick }) {
 		<div className="station-header" onClick={handleClick}>
 			<div className="station-header-top">
 				<div className="station-info">
-					<div className="station-name">{station.customLabel || station.name}</div>
+					<div className="station-name" style={{ color: station.color }}>{station.customLabel || station.name}</div>
 				</div>
 
 				{selected && onClick && (
-					<button className="close-button" onClick={handleClick}>
+					<button className="close-button sqr-btn" onClick={handleClick}>
 						<X />
 					</button>
 				)}

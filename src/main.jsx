@@ -6,8 +6,8 @@ import { validateConfig } from './lib/config.js'
 const defaultConfig = {
 	codeStations: ['H423041010', 'Y251002001'],
 	stationsLabels: {
-		H423041010: 'Station 1',
-		Y251002001: 'Station 2'
+		H423041010: 'La Têt à Perpignan',
+		Y251002001: 'La Garonne à Tonneins'
 	},
 	colors: {
 		station: '#0D4',
@@ -17,7 +17,18 @@ const defaultConfig = {
 	grandeurHydro: 'Q',
 	days: 10,
 	sort: 'desc',
-	showMap: true
+	showMap: true,
+	threshold: 'low-water',
+    seuils: {
+        'H423041010': [
+			{ label: 'Vigilance', value: 2400, color: '#FFD700', style: 'dotted', default: true },
+			{ label: 'Alerte', value: 1500, color: 'orange', style: 'dashed', default: true },
+			{ label: 'Crise', value: 200, color: 'red', style: 'solid', default: true }
+        ],
+        'Y251002001': [
+			{ label: 'Débit de crue', value: 1, color: 'blue', style: 'solid', default: true }
+        ]
+    }
 }
 
 const renderApp = (config) => {

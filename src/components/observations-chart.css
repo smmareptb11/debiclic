@@ -75,3 +75,29 @@
     text-wrap: nowrap;
   }
 }
+
+.seuils-legend {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.seuil-legend-item {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0.4; /* Inactive state */
+}
+
+.seuil-legend-item.active {
+  opacity: 1; /* Active state */
+}
