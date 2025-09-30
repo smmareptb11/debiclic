@@ -75,49 +75,49 @@ export function validateConfig(config) {
 		errors.push('"container" doit être un sélecteur CSS (string).')
 	}
 
-	// Seuil
-	if (config.threshold === undefined) {
-		config.threshold = 'none' // valeur par défaut
+	// Threshold mode
+	if (config.thresholdType === undefined) {
+		config.thresholdType = 'none' // valeur par défaut
 	}
-	else if (!['none', 'low-water', 'flood'].includes(config.threshold)) {
-		errors.push('"threshold" doit être "none", "low-water" ou "flood".')
+	else if (!['none', 'low-water', 'flood'].includes(config.thresholdType)) {
+		errors.push('"thresholdType" doit être "none", "low-water" ou "flood".')
 	}
 
-	// Seuils
-	if (config.seuils) {
-		if (typeof config.seuils !== 'object') {
-			errors.push('"seuils" doit être un objet.')
+	// Thresholds per station
+	if (config.thresholds) {
+		if (typeof config.thresholds !== 'object') {
+			errors.push('"thresholds" doit être un objet.')
 		}
 		else {
-			for (const stationCode in config.seuils) {
+			for (const stationCode in config.thresholds) {
 				if (!config.codeStations.includes(stationCode)) {
-					errors.push(`"seuils" contient une clé de station inconnue : ${stationCode}`)
+					errors.push(`"thresholds" contient une clé de station inconnue : ${stationCode}`)
 				}
 				else {
-					const seuils = config.seuils[stationCode]
-					if (!Array.isArray(seuils)) {
-						errors.push(`Les seuils pour la station ${stationCode} doivent être un tableau.`)
+					const thresholds = config.thresholds[stationCode]
+					if (!Array.isArray(thresholds)) {
+						errors.push(`Les thresholds pour la station ${stationCode} doivent être un tableau.`)
 					}
 					else {
-						seuils.forEach((seuil, index) => {
-							if (typeof seuil !== 'object' || seuil === null) {
-								errors.push(`Le seuil à l'index ${index} pour la station ${stationCode} doit être un objet.`)
+						thresholds.forEach((th, index) => {
+							if (typeof th !== 'object' || th === null) {
+								errors.push(`Le threshold à l'index ${index} pour la station ${stationCode} doit être un objet.`)
 								return
 							}
-							if (typeof seuil.label !== 'string') {
-								errors.push(`Le seuil à l'index ${index} pour la station ${stationCode} doit avoir un "label" (chaîne de caractères).`)
+							if (typeof th.label !== 'string') {
+								errors.push(`Le threshold à l'index ${index} pour la station ${stationCode} doit avoir un "label" (chaîne).`)
 							}
-							if (typeof seuil.value !== 'number') {
-								errors.push(`Le seuil à l'index ${index} pour la station ${stationCode} doit avoir une "value" (nombre).`)
+							if (typeof th.value !== 'number') {
+								errors.push(`Le threshold à l'index ${index} pour la station ${stationCode} doit avoir une "value" (nombre).`)
 							}
-							if (typeof seuil.color !== 'string') {
-								errors.push(`Le seuil à l'index ${index} pour la station ${stationCode} doit avoir une "color" (chaîne de caractères).`)
+							if (typeof th.color !== 'string') {
+								errors.push(`Le threshold à l'index ${index} pour la station ${stationCode} doit avoir une "color" (chaîne).`)
 							}
-							if (seuil.style && !['solid', 'dotted', 'dashed'].includes(seuil.style)) {
-								errors.push(`Le "style" du seuil à l'index ${index} pour la station ${stationCode} doit être "solid", "dotted" ou "dashed".`)
+							if (th.style && !['solid', 'dotted', 'dashed'].includes(th.style)) {
+								errors.push(`Le "style" du threshold à l'index ${index} pour la station ${stationCode} doit être "solid", "dotted" ou "dashed".`)
 							}
-							if (seuil.default && typeof seuil.default !== 'boolean') {
-								errors.push(`Le "default" du seuil à l'index ${index} pour la station ${stationCode} doit être un booléen.`)
+							if (th.default && typeof th.default !== 'boolean') {
+								errors.push(`Le "default" du threshold à l'index ${index} pour la station ${stationCode} doit être un booléen.`)
 							}
 						})
 					}
@@ -125,22 +125,20 @@ export function validateConfig(config) {
 			}
 		}
 
-		// Validation de l'ordre des seuils selon le mode
-		if (config.seuils && config.threshold) {
-			for (const stationCode in config.seuils) {
-				const seuils = config.seuils[stationCode];
-				if (Array.isArray(seuils) && seuils.length > 1) {
-					if (config.threshold === 'low-water') {
-						// Pour l'étiage, les seuils doivent être dans l'ordre décroissant
-						const values = seuils.map(s => s.value);
+		// Validation de l'ordre des thresholds selon le mode
+		if (config.thresholds && config.thresholdType) {
+			for (const stationCode in config.thresholds) {
+				const thresholds = config.thresholds[stationCode];
+				if (Array.isArray(thresholds) && thresholds.length > 1) {
+					if (config.thresholdType === 'low-water') {
+						const values = thresholds.map(s => s.value);
 						if (values.some((val, i) => i > 0 && val <= values[i-1])) {
-							errors.push(`Les seuils pour la station ${stationCode} doivent être dans l'ordre décroissant pour le mode étiage (low-water)`);
+							errors.push(`Les thresholds pour la station ${stationCode} doivent être dans l'ordre décroissant pour le mode low-water`);
 						}
-					} else if (config.threshold === 'flood') {
-						// Pour la crue, les seuils doivent être dans l'ordre croissant
-						const values = seuils.map(s => s.value);
+					} else if (config.thresholdType === 'flood') {
+						const values = thresholds.map(s => s.value);
 						if (values.some((val, i) => i > 0 && val >= values[i-1])) {
-							errors.push(`Les seuils pour la station ${stationCode} doivent être dans l'ordre croissant pour le mode crue (flood)`);
+							errors.push(`Les thresholds pour la station ${stationCode} doivent être dans l'ordre croissant pour le mode flood`);
 						}
 					}
 				}

@@ -53,8 +53,8 @@ Permettre aux collectivités, acteurs publics ou tout autre site tiers d’inté
     days: 15,
     sort: "desc",
     showMap: true,
-    threshold: 'low-water', // 'none', 'low-water', ou 'flood'
-    seuils: {
+    thresholdType: 'low-water', // 'none', 'low-water', ou 'flood'
+    thresholds: {
       "F001000101": [
         { label: 'Vigilance', value: 50, color: 'yellow' },
         { label: 'Alerte', value: 25, color: 'orange' },
@@ -82,9 +82,9 @@ Ce script injecte dynamiquement une iframe contenant l'application Débi'Clic, p
 - 🧱 [Structure du code source](./src)
 - 📚 [Licence AGPL-3.0](./LICENSE)
 
-### 🔀 Modes de coloration par seuil (`threshold`)
+### 🔀 Modes de coloration par seuil (`thresholdType`)
 
-Le paramètre global `threshold` contrôle la coloration des stations en fonction des seuils définis pour chaque station :
+Le paramètre global `thresholdType` contrôle la coloration des stations en fonction des seuils définis pour chaque station :
 
 | Mode | Comportement | Exemple visuel |
 |------|--------------|----------------|
@@ -92,10 +92,10 @@ Le paramètre global `threshold` contrôle la coloration des stations en fonctio
 | `flood` | Couleur = couleur du dernier seuil dépassé (plus grand seuil dont la valeur est ≤ observation). Si l'observation est inférieure au premier seuil, couleur par défaut. | Progression de couleur avec la montée de la valeur. |
 | `low-water` | Couleur = couleur du premier seuil au-dessus de la valeur mesurée (plus petit seuil strictement > observation). Si la valeur est au-dessus du plus haut seuil, couleur par défaut. | Met en évidence la proximité d'un seuil bas. |
 
-Pour activer la logique, définissez également des `seuils` :
+Pour activer la logique, définissez également des `thresholds` :
 
 ```js
-seuils: {
+thresholds: {
   "F001000101": [
   { label: 'Vigilance', value: 50, color: 'yellow', style: 'dotted', default: true },
   { label: 'Alerte', value: 25, color: 'orange', style: 'dashed', default: true },

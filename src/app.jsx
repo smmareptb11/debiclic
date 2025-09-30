@@ -21,8 +21,8 @@ const App = ({
 	endDate,
 	days = 30,
 	sort = 'default',
-	seuils = {},
-	threshold = 'none'
+	thresholds = {},
+	thresholdType = 'none'
 }) => {
 	const [stations, setStations] = useState([])
 	const [selectedStationCode, setSelectedStationCode] = useState(null)
@@ -49,8 +49,8 @@ const App = ({
 				const activeStations = stations.filter(station => station.en_service)
 				const stationsData = await Promise.all(activeStations.map(async (station) => {
 					const lastObservation = await fetchLastObservation({ codeStation: station.code_station, grandeurHydro })
-					const stationSeuils = seuils[station.code_station];
-					const color = getStationColor(lastObservation, stationSeuils, threshold, colors.station);
+					const stationThresholds = thresholds[station.code_station]
+					const color = getStationColor(lastObservation, stationThresholds, thresholdType, colors.station)
 
 					return {
 						codeStation: station.code_station,
@@ -92,7 +92,7 @@ const App = ({
 			days={days}
 			grandeurHydro={grandeurHydro}
 			colors={colors}
-			seuils={seuils}
+			thresholds={thresholds}
 		>
 			<div className="app">
 				{showMap && (
@@ -120,7 +120,7 @@ const App = ({
 								<StationItem
 									station={stations.find(({ codeStation }) => codeStation === selectedStationCode)}
 									onClick={stations.length > 1 ? handleClickStation : null}
-									seuils={seuils[selectedStationCode]}
+									thresholds={thresholds[selectedStationCode]}
 								/>
 							</div>
 						) : (

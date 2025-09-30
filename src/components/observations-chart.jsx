@@ -14,7 +14,7 @@ const DEFAULT_ZOOMED_HEIGHT = 300
 const RANGER_OFFSET = 100
 const DEFAULT_RANGER_HEIGHT = 28
 
-const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, onExportPNG, setVisibleDates, seuils }) => {
+const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, onExportPNG, setVisibleDates, thresholds }) => {
 	const zoomRef = useRef(null)
 	const uZoomedRef = useRef()
 	const rangerRef = useRef(null)
@@ -30,8 +30,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		zipped.sort((a, b) => a[0] - b[0])
 		const xVals = zipped.map(d => d[0])
 		const yVals = zipped.map(d => d[1])
-		const seuilsData = (seuils || []).map(seuil => Array(xVals.length).fill(seuil.value * (meta.coef || 1)));
-		const transformedData = [xVals, yVals, ...seuilsData]
+		const thresholdsData = (thresholds || []).map(th => Array(xVals.length).fill(th.value * (meta.coef || 1)));
+		const transformedData = [xVals, yVals, ...thresholdsData]
 
 		// Domaine de la vue principale sur les derniers N jours
 		const daysClamped = Math.max(1, days)
@@ -46,14 +46,14 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 			uZoomedRef.current = null
 		}
 
-		const seuilsSeries = (seuils || []).map(seuil => ({
-			label: seuil.label,
-			stroke: seuil.color,
+		const thresholdsSeries = (thresholds || []).map(th => ({
+			label: th.label,
+			stroke: th.color,
 			width: 2,
-			dash: seuil.style === 'dotted' ? [4, 4] : (seuil.style === 'dashed' ? [15, 5] : null),
-			value: (u, v) => `${seuil.label} (${formaterNombreFr(seuil.value * (meta.coef || 1))} ${meta.unit})`,
+			dash: th.style === 'dotted' ? [4, 4] : (th.style === 'dashed' ? [15, 5] : null),
+			value: (u, v) => `${th.label} (${formaterNombreFr(th.value * (meta.coef || 1))} ${meta.unit})`,
 			points: { show: false },
-			show: seuil.default
+			show: th.default
 		}));
 
 		const options = {
@@ -86,7 +86,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 					width: 2,
 					value: (u, v) => (v != null && !isNaN(v)) ? `${formaterNombreFr(v)} ${meta.unit}` : '-'
 				},
-				...seuilsSeries
+				...thresholdsSeries
 			],
 			cursor: { drag: { setScale: false, setSelect: false }, bind: { dblclick: () => null } },
 			select: { show: false },
@@ -299,7 +299,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 			uRangerRef.current?.destroy()
 			window.removeEventListener('resize', handleResize)
 		}
-	}, [data, grandeurHydro, color, days, seuils])
+	}, [data, grandeurHydro, color, days, thresholds])
 
 	const exportPNG = useCallback(() => {
 		const canvas = uZoomedRef.current?.root.querySelector('canvas')
@@ -308,7 +308,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		onExportPNG(canvas)
 	}, [onExportPNG])
 
-	// Etat réactif de visibilité des séries (seuils)
+	// Etat réactif de visibilité des séries (thresholds)
 	const [seriesVisibility, setSeriesVisibility] = useState(new Map());
 
 	const refreshSeriesVisibility = useCallback(() => {
@@ -320,15 +320,15 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		));
 	}, []);
 
-	const toggleSeuil = useCallback((seuilLabel) => {
+	const toggleThreshold = useCallback((thresholdLabel) => {
 		if (!uZoomedRef.current) return;
-		const seriesIdx = uZoomedRef.current.series.findIndex(s => s.label === seuilLabel);
+		const seriesIdx = uZoomedRef.current.series.findIndex(s => s.label === thresholdLabel);
 		if (seriesIdx > -1) {
 			uZoomedRef.current.setSeries(seriesIdx, { show: !uZoomedRef.current.series[seriesIdx].show });
 			// Mettre à jour l'état de visibilité après modification
 			setSeriesVisibility(prev => {
 				const next = new Map(prev);
-				next.set(seuilLabel, !prev.get(seuilLabel));
+				next.set(thresholdLabel, !prev.get(thresholdLabel));
 				return next;
 			});
 		}
@@ -366,9 +366,9 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 
 			</div>
 
-				{(seuils && seuils.length > 0) && (
-					<div className="seuils-legend" role="list" aria-label="Seuils">
-						{seuils.map(seuil => {
+				{(thresholds && thresholds.length > 0) && (
+					<div className="thresholds-legend" role="list" aria-label="Légende des seuils">
+						{thresholds.map(th => {
 						const lineStyle = {
 							display: 'inline-block',
 							width: '25px',
@@ -376,8 +376,8 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 							verticalAlign: 'middle',
 						};
 
-							const isActive = !!seriesVisibility.get(seuil.label)
-							const baseColor = seuil.color
+							const isActive = !!seriesVisibility.get(th.label)
+							const baseColor = th.color
 
 							let ruleColor = baseColor
 							if (!isActive) {
@@ -386,9 +386,9 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 								ruleColor = '#bbb'
 							}
 
-							if (seuil.style === 'dotted') {
+							if (th.style === 'dotted') {
 								lineStyle.borderBottom = `2px dotted ${ruleColor}`
-							} else if (seuil.style === 'dashed') {
+							} else if (th.style === 'dashed') {
 								lineStyle.borderBottom = `2px dashed ${ruleColor}`
 							} else {
 								lineStyle.borderBottom = `2px solid ${ruleColor}`
@@ -396,15 +396,15 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 
 							return (
 								<button
-									key={seuil.label}
+									key={th.label}
 									role="listitem"
-									className={`seuil-legend-item ${isActive ? 'active' : 'inactive'}`}
+									className={`threshold-legend-item ${isActive ? 'active' : 'inactive'}`}
 									aria-pressed={isActive}
-									onClick={() => toggleSeuil(seuil.label)}
-									title={`${seuil.label} (${formaterNombreFr(seuil.value * (meta.coef || 1))} ${meta.unit})`}
+									onClick={() => toggleThreshold(th.label)}
+									title={`${th.label} (${formaterNombreFr(th.value * (meta.coef || 1))} ${meta.unit})`}
 								>
 									<span aria-hidden="true" style={lineStyle} />
-									<span>{seuil.label} ({formaterNombreFr(seuil.value * (meta.coef || 1))} {meta.unit})</span>
+									<span>{th.label} ({formaterNombreFr(th.value * (meta.coef || 1))} {meta.unit})</span>
 								</button>
 							)
 					})}

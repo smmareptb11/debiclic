@@ -1,16 +1,16 @@
 // Calcule la couleur d'une station selon les règles de modes de seuils.
 // Modes :
 //  - none : couleur par défaut
-//  - flood : couleur du dernier seuil dépassé (max seuil.value <= valeur). Sinon défaut si valeur en-dessous du plus bas seuil.
-//  - low-water : couleur du premier seuil au-dessus (min seuil.value > valeur). Sinon défaut si valeur au-dessus du plus haut seuil.
-export function getStationColor(lastObservation, seuils, thresholdMode, defaultColor) {
+//  - flood : couleur du dernier seuil dépassé (max threshold.value <= valeur). Sinon défaut si valeur en-dessous du plus bas seuil.
+//  - low-water : couleur du premier seuil au-dessus (min threshold.value > valeur). Sinon défaut si valeur au-dessus du plus haut seuil.
+export function getStationColor(lastObservation, thresholds, thresholdMode, defaultColor) {
   const mode = thresholdMode ?? 'none'
-  if (mode === 'none' || !Array.isArray(seuils) || seuils.length === 0) return defaultColor
+  if (mode === 'none' || !Array.isArray(thresholds) || thresholds.length === 0) return defaultColor
 
   const v = lastObservation?.resultat_obs
   if (v === undefined || v === null || isNaN(v)) return defaultColor
 
-  const sorted = [...seuils].sort((a, b) => a.value - b.value)
+  const sorted = [...thresholds].sort((a, b) => a.value - b.value)
 
   if (mode === 'flood') {
     if (v < sorted[0].value) return defaultColor

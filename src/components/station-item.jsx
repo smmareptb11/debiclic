@@ -9,7 +9,7 @@ import { getObservations } from '../lib/api'
 import Loader from './loader'
 import ConfigContext from '../contexts/config-context'
 
-function StationItem({ station, onClick, seuils }) {
+function StationItem({ station, onClick, thresholds }) {
 	const { colors, startDate, endDate, days, grandeurHydro } = useContext(ConfigContext)
 
 	const [observations, setObservations] = useState([])
@@ -101,7 +101,7 @@ function StationItem({ station, onClick, seuils }) {
 									days={days}
 									onExportPNG={exportPNG}
 									setVisibleDates={setVisibleDates}
-									seuils={seuils}
+									thresholds={thresholds}
 								/>
 							) : (
 								<div className="loader-container">

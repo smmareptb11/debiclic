@@ -13,6 +13,7 @@
     <h1>Exemple d'intégration avec seuils</h1>
     <div id="debiclic-widget"></div>
 
+    <script src="https://unpkg.com/debiclic@latest/dist/embed/debiclic.min.js"></script>
     <script>
         debiclic.init({
             container: "#debiclic-widget",
@@ -29,8 +30,8 @@
             days: 15,
             sort: "desc",
             showMap: true,
-            threshold: 'low-water',
-            seuils: {
+            thresholdType: 'low-water',
+            thresholds: {
                 "F001000101": [
                     { label: 'Vigilance', value: 50, color: 'yellow', style: 'dotted', default: true },
                     { label: 'Alerte', value: 25, color: 'orange', style: 'dashed', default: true },
@@ -42,7 +43,5 @@
             }
         });
     </script>
-
-    <script src="../dist/embed/debiclic.min.js"></script>
 </body>
 </html>

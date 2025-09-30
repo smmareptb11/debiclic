@@ -18,8 +18,8 @@ const defaultConfig = {
 	days: 10,
 	sort: 'desc',
 	showMap: true,
-	threshold: 'low-water',
-    seuils: {
+	thresholdType: 'low-water',
+	thresholds: {
         'H423041010': [
 			{ label: 'Vigilance', value: 2400, color: '#FFD700', style: 'dotted', default: true },
 			{ label: 'Alerte', value: 1500, color: 'orange', style: 'dashed', default: true },

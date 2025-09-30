@@ -76,7 +76,7 @@
   }
 }
 
-.seuils-legend {
+.thresholds-legend {
   display: flex;
   gap: 1rem;
   margin-top: 0.5rem;
@@ -84,7 +84,7 @@
   flex-wrap: wrap;
 }
 
-.seuil-legend-item {
+.threshold-legend-item {
   background: none;
   border: none;
   padding: 0.25rem;
@@ -98,6 +98,6 @@
   opacity: 0.4; /* Inactive state */
 }
 
-.seuil-legend-item.active {
+.threshold-legend-item.active {
   opacity: 1; /* Active state */
 }
