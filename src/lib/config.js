@@ -116,7 +116,7 @@ export function validateConfig(config) {
 							if (th.style && !['solid', 'dotted', 'dashed'].includes(th.style)) {
 								errors.push(`Le "style" du threshold à l'index ${index} pour la station ${stationCode} doit être "solid", "dotted" ou "dashed".`)
 							}
-							if (th.default && typeof th.default !== 'boolean') {
+							if (th.default !== undefined && typeof th.default !== 'boolean') {
 								errors.push(`Le "default" du threshold à l'index ${index} pour la station ${stationCode} doit être un booléen.`)
 							}
 						})
@@ -125,21 +125,28 @@ export function validateConfig(config) {
 			}
 		}
 
+		// Helper function to validate threshold order
+		function isOrdered(values, mode) {
+			if (mode === 'low-water') {
+				// Should be strictly decreasing
+				return values.every((val, i) => i === 0 || val < values[i-1]);
+			} else if (mode === 'flood') {
+				// Should be strictly increasing
+				return values.every((val, i) => i === 0 || val > values[i-1]);
+			}
+			return true;
+		}
+
 		// Validation de l'ordre des thresholds selon le mode
 		if (config.thresholds && config.thresholdType) {
 			for (const stationCode in config.thresholds) {
 				const thresholds = config.thresholds[stationCode];
 				if (Array.isArray(thresholds) && thresholds.length > 1) {
-					if (config.thresholdType === 'low-water') {
-						const values = thresholds.map(s => s.value);
-						if (values.some((val, i) => i > 0 && val <= values[i-1])) {
-							errors.push(`Les thresholds pour la station ${stationCode} doivent être dans l'ordre décroissant pour le mode low-water`);
-						}
-					} else if (config.thresholdType === 'flood') {
-						const values = thresholds.map(s => s.value);
-						if (values.some((val, i) => i > 0 && val >= values[i-1])) {
-							errors.push(`Les thresholds pour la station ${stationCode} doivent être dans l'ordre croissant pour le mode flood`);
-						}
+					const values = thresholds.map(s => s.value);
+					if (config.thresholdType === 'low-water' && !isOrdered(values, 'low-water')) {
+						errors.push(`Les thresholds pour la station ${stationCode} doivent être dans l'ordre décroissant pour le mode low-water`);
+					} else if (config.thresholdType === 'flood' && !isOrdered(values, 'flood')) {
+						errors.push(`Les thresholds pour la station ${stationCode} doivent être dans l'ordre croissant pour le mode flood`);
 					}
 				}
 			}

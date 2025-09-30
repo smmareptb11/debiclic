@@ -53,7 +53,7 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 			dash: th.style === 'dotted' ? [4, 4] : (th.style === 'dashed' ? [15, 5] : null),
 			value: (u, v) => `${th.label} (${formaterNombreFr(th.value * (meta.coef || 1))} ${meta.unit})`,
 			points: { show: false },
-			show: th.default
+			show: th.default !== undefined ? th.default : true // Par défaut, afficher le seuil
 		}));
 
 		const options = {
@@ -315,10 +315,10 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 		if (!uZoomedRef.current) return;
 		setSeriesVisibility(new Map(
 			uZoomedRef.current.series
-				.filter(s => s.label)
+				.filter(s => s.label && s.label !== 'Date' && s.label !== meta.label) // Exclure les séries de données principales
 				.map(s => [s.label, s.show])
 		));
-	}, []);
+	}, [meta.label]);
 
 	const toggleThreshold = useCallback((thresholdLabel) => {
 		if (!uZoomedRef.current) return;
@@ -369,26 +369,30 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 				{(thresholds && thresholds.length > 0) && (
 					<div className="thresholds-legend" role="list" aria-label="Légende des seuils">
 						{thresholds.map(th => {
-						const lineStyle = {
-							display: 'inline-block',
-							width: '25px',
-							marginRight: '8px',
-							verticalAlign: 'middle',
-						};
+							const lineStyle = {
+								display: 'inline-block',
+								width: '25px',
+								height: '2px',
+								marginRight: '8px',
+								verticalAlign: 'middle',
+							};
 
-							const isActive = !!seriesVisibility.get(th.label)
+							// Utiliser la visibilité par défaut si seriesVisibility n'est pas encore initialisé
+							const isActive = seriesVisibility.has(th.label) 
+								? seriesVisibility.get(th.label) 
+								: (th.default !== undefined ? th.default : true)
+							
 							const baseColor = th.color
-
 							let ruleColor = baseColor
 							if (!isActive) {
 								// Couleur atténuée pour la ligne lorsqu'inactive
-								// Conversion simple en ajoutant une transparence via gradient simulé
 								ruleColor = '#bbb'
 							}
 
-							if (th.style === 'dotted') {
+							const thresholdStyle = th.style || 'solid' // Valeur par défaut selon la doc
+							if (thresholdStyle === 'dotted') {
 								lineStyle.borderBottom = `2px dotted ${ruleColor}`
-							} else if (th.style === 'dashed') {
+							} else if (thresholdStyle === 'dashed') {
 								lineStyle.borderBottom = `2px dashed ${ruleColor}`
 							} else {
 								lineStyle.borderBottom = `2px solid ${ruleColor}`
@@ -401,15 +405,15 @@ const ObservationChart = ({ data, color = '#007BFF', days = 30, grandeurHydro, o
 									className={`threshold-legend-item ${isActive ? 'active' : 'inactive'}`}
 									aria-pressed={isActive}
 									onClick={() => toggleThreshold(th.label)}
-									title={`${th.label} (${formaterNombreFr(th.value * (meta.coef || 1))} ${meta.unit})`}
+									title={`Cliquer pour ${isActive ? 'masquer' : 'afficher'} le seuil ${th.label}`}
 								>
 									<span aria-hidden="true" style={lineStyle} />
 									<span>{th.label} ({formaterNombreFr(th.value * (meta.coef || 1))} {meta.unit})</span>
 								</button>
 							)
-					})}
-				</div>
-			)}
+						})}
+					</div>
+				)}
 		</div>
 	)
 }
