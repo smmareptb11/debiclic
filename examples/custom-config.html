@@ -111,6 +111,29 @@
       background-color: #1d4ed8;
     }
 
+    button.secondary {
+      background-color: #64748b;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    button.secondary:hover {
+      background-color: #475569;
+    }
+
+    button.danger {
+      background-color: #dc2626;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      width: auto;
+      margin-top: 0;
+    }
+
+    button.danger:hover {
+      background-color: #b91c1c;
+    }
+
     /* Button group layout */
     .button-group {
       display: flex;
@@ -151,6 +174,56 @@
       .config-widget-container #debiclic-widget {
         width: 50%;
       }
+    }
+
+    /* Thresholds section */
+    .threshold-station {
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #f8fafc;
+    }
+
+    .threshold-station h3 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1rem;
+      color: #1e293b;
+    }
+
+    .threshold-item {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+      gap: 0.5rem;
+      align-items: end;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      background: white;
+      border-radius: 0.375rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .threshold-item label {
+      margin: 0;
+      font-size: 0.85rem;
+    }
+
+    .threshold-item input[type="text"],
+    .threshold-item input[type="number"],
+    .threshold-item select {
+      padding: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .threshold-item input[type="color"] {
+      width: 3rem;
+      height: 2.25rem;
+    }
+
+    .threshold-item input[type="checkbox"] {
+      width: 1.25rem;
+      height: 1.25rem;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -235,6 +308,22 @@
       </label>
     </div>
 
+    <h2>📊 Seuils</h2>
+    <div class="section">
+      <label>
+        Mode de coloration des stations
+        <select name="thresholdType">
+          <option value="none">Aucun (couleur par défaut)</option>
+          <option value="flood">Crue (dernier seuil dépassé)</option>
+          <option value="low-water">Étiage (premier seuil non atteint)</option>
+        </select>
+      </label>
+    </div>
+    
+    <div id="thresholds-section">
+      <!-- Seuils dynamiques par station -->
+    </div>
+
     <div class="button-group">
       <button type="submit">Appliquer la configuration</button>
       <button type="button" id="copy-config-json">📋</button>
@@ -259,7 +348,11 @@
     const form = document.getElementById('config-form');
     const codeStationsInput = document.getElementById('codeStations');
     const labelsSection = document.getElementById('labels-section');
+    const thresholdsSection = document.getElementById('thresholds-section');
     const widgetContainer = document.getElementById('debiclic-widget');
+
+    // Store thresholds data
+    let thresholdsData = {};
 
     function updateLabelInputs() {
       labelsSection.innerHTML = '';
@@ -272,6 +365,150 @@
       });
     }
 
+    function updateThresholdsInputs() {
+      thresholdsSection.innerHTML = '';
+      const codes = codeStationsInput.value.split(',').map(s => s.trim()).filter(Boolean);
+      
+      codes.forEach(code => {
+        if (!thresholdsData[code]) {
+          thresholdsData[code] = [];
+        }
+
+        // Get custom label if exists
+        const labelInput = document.querySelector(`input[name="label-${code}"]`);
+        const customLabel = labelInput?.value?.trim();
+        const displayName = customLabel || code;
+
+        const stationDiv = document.createElement('div');
+        stationDiv.className = 'threshold-station';
+        stationDiv.innerHTML = `
+          <h3>Seuils pour ${displayName}${customLabel ? ` <span style="color: #64748b; font-size: 0.85em;">(${code})</span>` : ''}</h3>
+          <div class="thresholds-list" data-station="${code}"></div>
+          <button type="button" class="secondary add-threshold" data-station="${code}">
+            + Ajouter un seuil
+          </button>
+        `;
+        thresholdsSection.appendChild(stationDiv);
+
+        renderThresholds(code);
+      });
+
+      // Add event listeners for add threshold buttons
+      document.querySelectorAll('.add-threshold').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const code = btn.getAttribute('data-station');
+          addThreshold(code);
+        });
+      });
+    }
+
+    function renderThresholds(stationCode) {
+      const list = document.querySelector(`.thresholds-list[data-station="${stationCode}"]`);
+      if (!list) return;
+
+      list.innerHTML = '';
+      
+      thresholdsData[stationCode].forEach((threshold, index) => {
+        const item = document.createElement('div');
+        item.className = 'threshold-item';
+        item.innerHTML = `
+          <label>
+            Libellé
+            <input type="text" 
+                   value="${threshold.label || ''}" 
+                   data-station="${stationCode}" 
+                   data-index="${index}" 
+                   data-field="label" 
+                   placeholder="ex: Vigilance" />
+          </label>
+          <label>
+            Valeur
+            <input type="number" 
+                   step="0.01"
+                   value="${threshold.value || ''}" 
+                   data-station="${stationCode}" 
+                   data-index="${index}" 
+                   data-field="value" 
+                   placeholder="ex: 50" />
+          </label>
+          <label>
+            Couleur
+            <input type="color" 
+                   value="${threshold.color || '#fbbf24'}" 
+                   data-station="${stationCode}" 
+                   data-index="${index}" 
+                   data-field="color" />
+          </label>
+          <label>
+            Style
+            <select data-station="${stationCode}" 
+                    data-index="${index}" 
+                    data-field="style">
+              <option value="solid" ${threshold.style === 'solid' ? 'selected' : ''}>Plein</option>
+              <option value="dashed" ${threshold.style === 'dashed' ? 'selected' : ''}>Tirets</option>
+              <option value="dotted" ${threshold.style === 'dotted' ? 'selected' : ''}>Points</option>
+            </select>
+          </label>
+          <label>
+            Visible
+            <input type="checkbox" 
+                   ${threshold.default !== false ? 'checked' : ''} 
+                   data-station="${stationCode}" 
+                   data-index="${index}" 
+                   data-field="default" />
+          </label>
+          <button type="button" class="danger remove-threshold" 
+                  data-station="${stationCode}" 
+                  data-index="${index}">
+            ✕
+          </button>
+        `;
+        list.appendChild(item);
+      });
+
+      // Add event listeners for threshold inputs
+      list.querySelectorAll('input, select').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const station = e.target.getAttribute('data-station');
+          const index = parseInt(e.target.getAttribute('data-index'));
+          const field = e.target.getAttribute('data-field');
+          
+          if (field === 'default') {
+            thresholdsData[station][index][field] = e.target.checked;
+          } else if (field === 'value') {
+            thresholdsData[station][index][field] = parseFloat(e.target.value) || 0;
+          } else {
+            thresholdsData[station][index][field] = e.target.value;
+          }
+        });
+      });
+
+      // Add event listeners for remove buttons
+      list.querySelectorAll('.remove-threshold').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const station = btn.getAttribute('data-station');
+          const index = parseInt(btn.getAttribute('data-index'));
+          removeThreshold(station, index);
+        });
+      });
+    }
+
+    function addThreshold(stationCode) {
+      thresholdsData[stationCode].push({
+        label: '',
+        value: 0,
+        color: '#fbbf24',
+        style: 'solid',
+        default: true
+      });
+      renderThresholds(stationCode);
+    }
+
+    function removeThreshold(stationCode, index) {
+      thresholdsData[stationCode].splice(index, 1);
+      renderThresholds(stationCode);
+    }
+
     function getWidgetConfig(data) {
       const codeStations = data.get('codeStations').split(',').map(s => s.trim()).filter(Boolean);
       const stationsLabels = {};
@@ -280,7 +517,23 @@
         if (val) stationsLabels[code] = val;
       });
 
-      return {
+      // Build thresholds config
+      const thresholds = {};
+      const thresholdType = data.get('thresholdType') || 'none';
+      
+      codeStations.forEach(code => {
+        if (thresholdsData[code] && thresholdsData[code].length > 0) {
+          // Filter out invalid thresholds (missing label or value)
+          const validThresholds = thresholdsData[code].filter(t => 
+            t.label && t.label.trim() !== '' && t.value !== null && t.value !== undefined
+          );
+          if (validThresholds.length > 0) {
+            thresholds[code] = validThresholds;
+          }
+        }
+      });
+
+      const config = {
         container: '#debiclic-widget',
         codeStations,
         stationsLabels,
@@ -296,10 +549,30 @@
         showMap: data.get('showMap') === 'true',
         mapWidth: data.get('mapWidth')
       };
+
+      // Only add thresholdType and thresholds if not 'none' or if thresholds exist
+      if (thresholdType !== 'none' || Object.keys(thresholds).length > 0) {
+        config.thresholdType = thresholdType;
+        if (Object.keys(thresholds).length > 0) {
+          config.thresholds = thresholds;
+        }
+      }
+
+      return config;
     }
 
-    codeStationsInput.addEventListener('input', updateLabelInputs);
+    codeStationsInput.addEventListener('input', () => {
+      updateLabelInputs();
+      updateThresholdsInputs();
+    });
+    
+    // Also update thresholds when labels change
+    labelsSection.addEventListener('input', () => {
+      updateThresholdsInputs();
+    });
+    
     updateLabelInputs();
+    updateThresholdsInputs();
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
