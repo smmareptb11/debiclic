@@ -50,7 +50,7 @@ const App = ({
 				const stationsData = await Promise.all(activeStations.map(async (station) => {
 					const lastObservation = await fetchLastObservation({ codeStation: station.code_station, grandeurHydro })
 					const stationThresholds = thresholds[station.code_station]
-					const color = getStationColor(lastObservation, stationThresholds, thresholdType, colors.station)
+					const color = getStationColor(lastObservation, stationThresholds, thresholdType, colors.station, grandeurHydro)
 
 					return {
 						codeStation: station.code_station,
