@@ -98,7 +98,7 @@ export async function fetchLastObservation({ codeStation, grandeurHydro }) {
 
 		const params = new URLSearchParams({
 			code_entite: codeStation,
-			grandeur_hydro: 'QmnJ',
+			grandeur_hydro_elab: 'QmnJ',
 			date_debut_obs_elab: yesterday,
 			date_fin_obs_elab: today,
 			size: '1',
